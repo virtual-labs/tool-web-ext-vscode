@@ -11,10 +11,28 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": ["VirtualLabs.helloWorld"],
   "browser": "./dist/web/extension.js",
   "icon": "images/logo.png",
   "contributes": {
+    "viewsContainers": {
+			"activitybar": [
+				{
+					"id": "vlabs-experiment-generator",
+					"title": "Experiment",
+					"icon": "images/icon.svg"
+				}
+			]
+		},
+    "views": {
+			"vlabs-experiment-generator": [
+				{
+					"type": "webview",
+					"id": "vlabs.experimentView",
+					"name": "Authoring Environment"
+				}
+			]
+		},
     "commands": [
       {
         "icon": "images/icon.svg",
