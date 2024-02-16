@@ -187,7 +187,9 @@ async function cloneWebView(view: vscode.WebviewView, extensionUri: vscode.Uri) 
 						const organization = message.organization;
 						const repoUrl = `https://github.com/${organization}/${experimentName}.git`;
 						const folderPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
+
 						vscode.window.showInformationMessage('Repository clone UI verified!');
+						vscode.window.showInformationMessage(`Experiment Link: ${repoUrl} \nFolder Link: ${folderPath} \nbranch is ${branch}`);
 						panel.dispose();
 						break;
 				}
