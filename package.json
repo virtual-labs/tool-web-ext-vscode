@@ -1,7 +1,10 @@
 {
   "name": "VirtualLabs",
   "displayName": "VirtualLabs",
-  "description": "Web-Extension",
+  "description": "A web extension for Virtual Labs",
+  "author": {
+    "name": "Virtual-Labs"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.86.0"
@@ -11,28 +14,30 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": ["VirtualLabs.helloWorld"],
+  "activationEvents": [
+    "VirtualLabs.helloWorld"
+  ],
   "browser": "./dist/web/extension.js",
   "icon": "images/logo.png",
   "contributes": {
     "viewsContainers": {
-			"activitybar": [
-				{
-					"id": "vlabs-experiment-generator",
-					"title": "Experiment",
-					"icon": "images/icon.svg"
-				}
-			]
-		},
+      "activitybar": [
+        {
+          "id": "vlabs-experiment-generator",
+          "title": "Experiment",
+          "icon": "images/icon.svg"
+        }
+      ]
+    },
     "views": {
-			"vlabs-experiment-generator": [
-				{
-					"type": "webview",
-					"id": "vlabs.experimentView",
-					"name": "Authoring Environment"
-				}
-			]
-		},
+      "vlabs-experiment-generator": [
+        {
+          "type": "webview",
+          "id": "vlabs.experimentView",
+          "name": "Authoring Environment"
+        }
+      ]
+    },
     "commands": [
       {
         "icon": "images/icon.svg",
@@ -44,29 +49,28 @@
   "scripts": {
     "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
     "pretest": "npm run compile-web",
-    "dev": "npx @vscode/test-web --extensionDevelopmentPath=.",
+    "dev": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ",
     "vscode:prepublish": "npm run package-web",
     "compile-web": "webpack",
     "watch-web": "webpack --watch",
     "package-web": "webpack --mode production --devtool hidden-source-map",
-    "lint": "eslint src --ext ts",
-    "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ."
+    "lint": "eslint src --ext ts"
   },
   "devDependencies": {
-    "@types/vscode": "^1.86.0",
-    "@types/mocha": "^10.0.6",
     "@types/assert": "^1.5.10",
-    "eslint": "^8.56.0",
+    "@types/mocha": "^10.0.6",
+    "@types/vscode": "^1.86.0",
+    "@types/webpack-env": "^1.18.4",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
-    "mocha": "^10.2.0",
-    "typescript": "^5.3.3",
     "@vscode/test-web": "^0.0.51",
-    "ts-loader": "^9.5.1",
-    "webpack": "^5.90.0",
-    "webpack-cli": "^5.1.4",
-    "@types/webpack-env": "^1.18.4",
     "assert": "^2.1.0",
-    "process": "^0.11.10"
+    "eslint": "^8.56.0",
+    "mocha": "^10.3.0",
+    "process": "^0.11.10",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.0",
+    "webpack-cli": "^5.1.4"
   }
 }
