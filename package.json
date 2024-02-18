@@ -50,6 +50,8 @@
     "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
     "pretest": "npm run compile-web",
     "dev": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ",
+    "generate-certificate": "mkdir -p $HOME/certs && cd $HOME/certs && mkcert -install && mkcert localhost",
+    "start-vscode-server": "npx serve --cors -l 5000 --ssl-cert $HOME/certs/localhost.pem --ssl-key $HOME/certs/localhost-key.pem",
     "vscode:prepublish": "npm run package-web",
     "compile-web": "webpack",
     "watch-web": "webpack --watch",
