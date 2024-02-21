@@ -436,13 +436,13 @@ async function cloneWebView() {
 			case 'clone':
 				{
 						const experimentName = message.experimentName;
-						const branch = message.branch;
+						// const branch = message.branch;
 						const organization = message.organization;
 						const repoUrl = `https://github.com/${organization}/${experimentName}.git`;
-						const folderPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
 
+						// open remote repository from github using Remote repository vscode api extension remoteHub.openRepository
+						vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
 						vscode.window.showInformationMessage('Repository clone UI verified!');
-						vscode.window.showInformationMessage(`Experiment Link: ${repoUrl} \nFolder Link: ${folderPath} \nbranch is ${branch}`);
 						panel.dispose();
 						break;
 				}
@@ -485,9 +485,16 @@ async function pushAndMerge(view: vscode.WebviewView, extensionUri: vscode.Uri, 
 	panel.webview.onDidReceiveMessage(async (message) => {
 		switch (message.command) {
 			case 'push':
-				vscode.window.showInformationMessage('push UI testing');
+				{
+				const userName = message.userName;
+				const personalAccessToken = message.personalAccessToken;
+				const commitMessage = message.commitMessage;
+
+				vscode.commands.executeCommand('remoteHub.push', userName, personalAccessToken, commitMessage);
+				vscode.window.showInformationMessage('Successfully Pushed');
 				panel.dispose();
 				break;
+				}
 		}
 	}, undefined, context.subscriptions);
 }
