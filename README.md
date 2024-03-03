@@ -20,5 +20,3 @@ For testing in production environment in vscode.dev :
 - Now paste the localhost link in the vscode.dev at workspace option (developer: install) and install the extension.
 
 **Note**: The compilation should be done before running the extension. If you encounter any error, make sure that you have compiled the code first.
-
-The extension is not yet published to the marketplace. It is still under development.
