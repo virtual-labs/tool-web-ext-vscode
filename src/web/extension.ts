@@ -436,11 +436,12 @@ async function cloneWebView() {
 			case 'clone':
 				{
 						const experimentName = message.experimentName;
-						// const branch = message.branch;
+						const branch = message.branch;
 						const organization = message.organization;
-						const repoUrl = `https://github.com/${organization}/${experimentName}.git`;
+						const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
 
-						// open remote repository from github using Remote repository vscode api extension remoteHub.openRepository
+						// open remote repository from github using Remote repository vscode api extension 
+						// command: remoteHub.openRepository
 						vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
 						vscode.window.showInformationMessage('Repository clone UI verified!');
 						panel.dispose();
@@ -454,16 +455,18 @@ async function cloneWebView() {
 
 function buildScript(command: string) {
 	switch (command) {
-		case 'command2':
-			vscode.window.showInformationMessage('Validation UI testing');
+		case 'command2': // Validate --
+			vscode.window.showInformationMessage('Validation UI testing started!');
+			// runValidation();
+			vscode.window.showInformationMessage('Validation UI testing completed!');
 			break;
-		case 'command3':
+		case 'command3': // Build Local
 			vscode.window.showInformationMessage('Build local UI testing');
 			break;
-		case 'command4':
+		case 'command4': // Deploy Local
 			vscode.window.showInformationMessage('Deploy local UI testing');
 			break;
-		case 'command5':
+		case 'command5': // Clean
 			vscode.window.showInformationMessage('Clean UI testing');
 			break;
 		default:
@@ -522,6 +525,7 @@ function raisePR(view: vscode.WebviewView, extensionUri: vscode.Uri, context: vs
 }
 
 
+// main code that starts everything else
 function activate(context: vscode.ExtensionContext){
 	const extensionUri = context.extensionUri;
 	vscode.window.registerWebviewViewProvider(
@@ -536,20 +540,20 @@ function activate(context: vscode.ExtensionContext){
 
 				// close webview panel after selection of a command
 					switch (message.command) {
-						case 'command1':
+						case 'command1': // Initialize experiment
 							if (vscode.workspace.workspaceFolders === null){
 								vscode.window.showErrorMessage("Please open a directory in vscode");
 								break;
 							}
 							cloneWebView();
 							break;
-						case 'command6':
+						case 'command6': // Deploy for Testing
 							await pushAndMerge(view, extensionUri, context);
 							break;
-						case 'command7':
+						case 'command7': // Submit for Review
 							raisePR(view, extensionUri, context);
 							break;
-						case 'command8':
+						case 'command8': // Help
 							{
 								const path = 	vscode.Uri.joinPath(extensionUri, 'src', 'README.md');
 								vscode.commands.executeCommand('markdown.showPreview', path);
@@ -563,8 +567,6 @@ function activate(context: vscode.ExtensionContext){
 		}}
 	);
 }
-
-
 
 function deactivate() {}
 

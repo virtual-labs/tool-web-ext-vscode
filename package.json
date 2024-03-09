@@ -44,7 +44,18 @@
         "command": "VirtualLabs.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "extends": [
+      "eslint:recommended"
+    ],
+    "env": {
+      "browser": true,
+      "es2021": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    }
   },
   "scripts": {
     "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
@@ -67,7 +78,7 @@
     "@typescript-eslint/parser": "^6.19.1",
     "@vscode/test-web": "^0.0.51",
     "assert": "^2.1.0",
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.0",
     "mocha": "^10.3.0",
     "process": "^0.11.10",
     "ts-loader": "^9.5.1",
