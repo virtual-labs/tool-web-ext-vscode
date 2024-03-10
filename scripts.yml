@@ -1,0 +1,27 @@
+name: Build workflow
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  build_folder:
+    runs-on: ubuntu-latest
+    env:
+      LOCATION: ${{ github.workspace }}/build
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: build-command
+      run: |
+          npx @virtual-labs/buildexp clean-build-exp
+          echo "LOCATION=${{ github.workspace }}/build" >> $GITHUB_ENV
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.1
+      with:
+        name: build
+        path: ${{ env.LOCATION }}
