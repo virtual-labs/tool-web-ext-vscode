@@ -453,12 +453,24 @@ async function cloneWebView() {
 	});
 }
 
+vscode.commands.registerCommand('extension.pushWithCustomMessage', async () => {
+    const commitMessage = await vscode.window.showInputBox({
+        prompt: 'Enter your commit message',
+        placeHolder: 'Type your commit message here...',
+    });
+
+    if (commitMessage) {
+        vscode.commands.executeCommand('remoteHub.openRepository', 'push', { commitMessage });
+    }
+	else {
+		vscode.window.showInformationMessage('Enter commit message !!!');
+	}
+});
+
 function buildScript(command: string) {
 	switch (command) {
 		case 'command2': // Validate --
-			vscode.window.showInformationMessage('Validation UI testing started!');
-			// runValidation();
-			vscode.window.showInformationMessage('Validation UI testing completed!');
+			vscode.commands.executeCommand('extension.pushWithCustomMessage');
 			break;
 		case 'command3': // Build Local
 			vscode.window.showInformationMessage('Build local UI testing');
@@ -566,6 +578,12 @@ function activate(context: vscode.ExtensionContext){
 			});
 		}}
 	);
+
+	context.subscriptions.push(
+        vscode.commands.registerCommand('extension.pushWithCustomMessage', () => {
+            vscode.commands.executeCommand('extension.pushWithCustomMessage');
+        })
+    );
 }
 
 function deactivate() {}

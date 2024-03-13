@@ -43,6 +43,10 @@
         "icon": "images/icon.svg",
         "command": "VirtualLabs.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "extension.pushWithCustomMessage",
+        "title": "Push with Custom Message"
       }
     ],
     "extends": [
