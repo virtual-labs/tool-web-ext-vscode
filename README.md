@@ -1,4 +1,18 @@
-### Using a workflow for the web-extension
+# Updates on the Workflow
+
+The workflow now creates the build folder and pushes it to the `gh-pages` branch. 
+
+### Problems encountered
+- The build folder is too large for gh-pages to host all of it. The number of files is around 2,000,000. The folder does get pushed to the branch, but results in an error when the page is tried to be deployed.
+    Upon deleting the `pycache` folder alone, the number of files is reduced to 4000, but github still does not allow for such a large number of files to be hosted. 
+    After this, I attempted to delete all the files in `venv` folder, which resulted in the page being hosted. (The number of files at this point is around 2000).
+
+### Hosting of the current progress
+The current progress will be in the link `https://virtual-labs.github.io/${{github.repository}}/build`. The user can now click on this to open and view the current progress
+
+---
+
+# Using a workflow for the web-extension
 
 The following progress reflects the progress made in trying to integrate the “Build”, “Deploy Local” and “Clean” buttons alone, and does not reflect the progress of the other functionalities.
 
@@ -51,28 +65,20 @@ Technologies explored and experimented with:
     - functioning of a workflow, events that trigger it
         
         https://docs.github.com/en/actions/using-workflows/triggering-a-workflow
-        
         https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
-        
         https://docs.github.com/en/actions/using-workflows/disabling-and-enabling-a-workflow
-        
         https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
         
     - use of a self-hosted runner (once we find a machine, maybe a similar idea can be used to make the a runner display the contents of  build)
-        
         https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners
         
         The above was used while trying to find a place to store the build folder before it gets cleaned by the workflow (which is what it does, unless place to store the folder persistently is found - this is currently as an artefact)
-        
     - Github artifacts and how to store workflow data
-        
         https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts
         
 - GitHub actions extension:
     - To try and use the inbuilt functionality of the extension in ours to accomplish automation
-        
         https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-github-actions
-        
         https://github.blog/2023-03-28-announcing-the-github-actions-extension-for-vs-code/
         
     
