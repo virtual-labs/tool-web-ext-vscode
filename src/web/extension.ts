@@ -133,6 +133,35 @@ div {
 #personalAccessToken{
 	width: 30%;
 	margin-right: 10%;
+}
+
+.instructions {
+	margin-bottom: 10px;
+}
+
+img {
+	margin: 20px auto;
+	max-width: 50%;
+}
+
+.push-dev_container {
+	display: block;
+    flex-direction: initial;
+    justify-content: initial; 
+    align-items: initial;
+    text-align: initial;
+	border: 2px solid green; /* First set of instructions with green border */
+}
+
+.push-dev_container:last-child {
+	border-color: red; /* Last set of instructions with red border */
+}
+
+.blue-background {
+	background-color: #2ea5cd; /* Blue color */
+	color: white;
+	padding: 5px;
+	border-radius: 5px;
 }`;
 
 
@@ -169,22 +198,16 @@ function getPanel1Content() {
 			<button class="sideButton" id="command2">Validate</button>
 		</div>
 		<div class="command3">
-			<button class="sideButton" id="command3">Build Local</button>
+			<button class="sideButton" id="command3">View Current Experiment</button>
 		</div>
 		<div class="command4">
-			<button class="sideButton" id="command4">Deploy Local</button>
+			<button class="sideButton" id="command4">Push to Dev</button>
 		</div>
 		<div class="command5">
-			<button class="sideButton" id="command5">Clean</button>
+			<button class="sideButton" id="command5">Submit for Review</button>
 		</div>
 		<div class="command6">
-			<button class="sideButton" id="command6">Deploy for Testing</button>
-		</div>
-		<div class="command7">
-			<button class="sideButton" id="command7">Submit for Review</button>
-		</div>
-		<div class="command8">
-			<button class="sideButton" id="command8">Help</button>
+			<button class="sideButton" id="command6">Help</button>
 		</div>
 		</body>
 		<script>
@@ -197,8 +220,6 @@ function getPanel1Content() {
 			const command4 = document.getElementById('command4');
 			const command5 = document.getElementById('command5');
 			const command6 = document.getElementById('command6');
-			const command7 = document.getElementById('command7');
-			const command8 = document.getElementById('command8');
 
 		command1.addEventListener('click', () => {
 				vscode.postMessage({
@@ -228,16 +249,6 @@ function getPanel1Content() {
 		command6.addEventListener('click', () => {
 			vscode.postMessage({
 				command: 'command6'
-			});
-		});
-		command7.addEventListener('click', () => {
-			vscode.postMessage({
-				command: 'command7'
-			});
-		});
-		command8.addEventListener('click', () => {
-			vscode.postMessage({
-				command: 'command8'
 			});
 		});
 		});
@@ -323,46 +334,28 @@ function getWebviewFormContent() {
 			<title>Virtual Labs Experiment Authoring Environment</title>
 			<style>
 			`+ commonCss +`
-			</style>
-			</head>
+		</style>
+		</head>
 
 		<body>
-			<h1>Virtual Labs Experiment Authoring Environment</h1>
-			<div class="Organization">
-				<label for="userName">Github User Name</label>
-				<input type="text" id="userName" name="userName">
-
+			<h1>Instructions</h1>
+			<div class="push-dev_container">
+				<!-- <img src="image1.png" alt="Image 1"> -->
+				<h4> A panel should appear on the left-hand side similar to this one with the <span class="blue-background">   Commit & Push  </span>   button and a text box above this button.</h4>
+				<h4> It shows all the changes (additions, modifications, deletions) made to the files done by you.</h4> 
 			</div>
-			<div class="Experiment">
-				<label for="personalAccessToken">Personal Access Token</label>
-				<input type="text" id="personalAccessToken" name="personalAccessToken">
-			</div>
-			<div class="Branch">
-				<label for="commitMessage">Commit Message</label>
-				<textarea id="commitMessage" name="commitMessage" ></textarea>
-			</div>
-			<button id="push" class="bigButton">Submit</button>
 
-			<script>
-			const vscode = acquireVsCodeApi();
-			function push() {
-			
-			const userName = document.getElementById("userName").value;
-			const personalAccessToken = document.getElementById("personalAccessToken").value;
-			const commitMessage = document.getElementById("commitMessage").value;
-			vscode.postMessage({
-				command: 'push',
-				userName: userName,
-				personalAccessToken: personalAccessToken,
-				commitMessage: commitMessage
-			});
-			}
+			<br>
+			<br>
 
-			const submitButton = document.getElementById('push');
-			submitButton.addEventListener('click', push);
-			</script>
+			<div class="push-dev_container">
+				<!-- <img src="image2.png" alt="Image 2"> -->
+				<h4> Add your commit message in the text box as shown. </h4>
+				<h4> Press push and commit.</h4>
+			</div>
+
+			<h3> <div class="instructions" style="color: red;">Warning: Please ensure you have write permissions to the repository or contact the owner or team at virtual labs via their email virtuallabs@gmail.com</div> </h3>
 		</body>
-
 		</html>`;
 }
 
@@ -443,6 +436,7 @@ async function cloneWebView() {
 						// open remote repository from github using Remote repository vscode api extension 
 						// command: remoteHub.openRepository
 						vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
+						vscode.commands.executeCommand('RemoteHub.switchToBranch', )
 						vscode.window.showInformationMessage('Repository clone UI verified!');
 						panel.dispose();
 						break;
@@ -472,14 +466,8 @@ function buildScript(command: string) {
 		case 'command2': // Validate --
 			vscode.commands.executeCommand('extension.pushWithCustomMessage');
 			break;
-		case 'command3': // Build Local
-			vscode.window.showInformationMessage('Build local UI testing');
-			break;
-		case 'command4': // Deploy Local
-			vscode.window.showInformationMessage('Deploy local UI testing');
-			break;
-		case 'command5': // Clean
-			vscode.window.showInformationMessage('Clean UI testing');
+		case 'command3': // View Current Experiment 
+			vscode.window.showInformationMessage('ViewCurrentExperiment');
 			break;
 		default:
 			break;
@@ -497,21 +485,7 @@ async function pushAndMerge(view: vscode.WebviewView, extensionUri: vscode.Uri, 
 	);
 
 	panel.webview.html = getWebviewFormContent();
-	panel.webview.onDidReceiveMessage(async (message) => {
-		switch (message.command) {
-			case 'push':
-				{
-				const userName = message.userName;
-				const personalAccessToken = message.personalAccessToken;
-				const commitMessage = message.commitMessage;
-
-				vscode.commands.executeCommand('remoteHub.push', userName, personalAccessToken, commitMessage);
-				vscode.window.showInformationMessage('Successfully Pushed');
-				panel.dispose();
-				break;
-				}
-		}
-	}, undefined, context.subscriptions);
+	vscode.commands.executeCommand('workbench.scm.focus');
 }
 
 function raisePR(view: vscode.WebviewView, extensionUri: vscode.Uri, context: vscode.ExtensionContext){
@@ -559,13 +533,13 @@ function activate(context: vscode.ExtensionContext){
 							}
 							cloneWebView();
 							break;
-						case 'command6': // Deploy for Testing
+						case 'command4': // Push to dev branch
 							await pushAndMerge(view, extensionUri, context);
 							break;
-						case 'command7': // Submit for Review
+						case 'command5': // Submit for Review
 							raisePR(view, extensionUri, context);
 							break;
-						case 'command8': // Help
+						case 'command6': // Help
 							{
 								const path = 	vscode.Uri.joinPath(extensionUri, 'src', 'README.md');
 								vscode.commands.executeCommand('markdown.showPreview', path);
