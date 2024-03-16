@@ -8,7 +8,7 @@ The workflow now creates the build folder and pushes it to the `gh-pages` branch
     Upon deleting the `pycache` folder alone, the number of files is reduced to 4000, but github still does not allow for such a large number of files to be hosted. 
     After this, I attempted to delete all the files in `venv` folder, which resulted in the page being hosted. (The number of files at this point is around 2000).
 
-  The deletion of files is done be the workflow, so this will be done every time the `View Current Experiment` button is clicked.
+  The deletion of files is done be the workflow, so this will be done every time the `View Current Experiment` button is clicked (and it is not something that needs to be done manually).
 
 ### Hosting of the current progress
 The current progress will be in the link `https://virtual-labs.github.io/${{github.repository}}/build`. The user can now click on this to open and view the current progress
