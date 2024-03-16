@@ -3,25 +3,39 @@ name: Build workflow
 on:
   push:
     branches:
-      - dev
+      - dev-build
   workflow_dispatch:
+
+permissions: write-all
 
 jobs:
   build_folder:
     runs-on: ubuntu-latest
     env:
       LOCATION: ${{ github.workspace }}/build
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
     - name: build-command
       run: |
-          npx @virtual-labs/buildexp clean-build-exp
-          echo "LOCATION=${{ github.workspace }}/build" >> $GITHUB_ENV
+        npx @virtual-labs/buildexp clean-build-exp
+        echo "LOCATION=${{ github.workspace }}/build" >> $GITHUB_ENV
+        find . -type d -name "__pycache__" -exec rm -r {} +
+        find . -type d -name "venv" -exec rm -r {} + # check
+        cd ../
+        git -C ${{ github.workspace }} checkout --orphan gh-pages
+        git -C ${{ github.workspace }} reset
+        git -C ${{ github.workspace }} add build/* -f
 
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4.3.1
+        git -C ${{ github.workspace }} config user.name "vleadadmin"
+        git -C ${{ github.workspace }} config user.email "admin@vlabs.ac.in"
+
+        git -C ${{ github.workspace }} commit -m "https://virtual-labs.github.io/${{ github.repository }}/build click on the link to test your code."
+        
+    - uses: ad-m/github-push-action@master
       with:
-        name: build
-        path: ${{ env.LOCATION }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        force: true
+        branch: gh-pages
