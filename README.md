@@ -10,7 +10,7 @@ The workflow now creates the build folder and pushes it to the `gh-pages` branch
 
   The deletion of files is done be the workflow, so this will be done every time the `View Current Experiment` button is clicked (and it is not something that needs to be done manually).
   
-### Things note about the workflow
+### Things to note about the workflow
 - It makes use of --orphan flag of the git checkout command, which means that the gh-pages branch will be wiped clean after which the contents of the build folder will be pushed. (This was implemented after this week's meeting, where we were specifically asked to make use of the --orphan flag).
 - It gets rid of all `pycache` and `venv` folders.
 - It commits as `vleadadmin`
