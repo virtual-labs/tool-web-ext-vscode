@@ -9,10 +9,18 @@ The workflow now creates the build folder and pushes it to the `gh-pages` branch
     After this, I attempted to delete all the files in `venv` folder, which resulted in the page being hosted. (The number of files at this point is around 2000).
 
   The deletion of files is done be the workflow, so this will be done every time the `View Current Experiment` button is clicked (and it is not something that needs to be done manually).
+  
+### Things note about the workflow
+- It makes use of --orphan flag of the git checkout command, which means that the gh-pages branch will be wiped clean after which the contents of the build folder will be pushed. (This was implemented after this week's meeting, where we were specifically asked to make use of the --orphan flag).
+- It gets rid of all `pycache` and `venv` folders.
+- It commits as `vleadadmin`
+- It has write permissions (without which, it would not be able to push).
+- It assumes that there is a branch named `gh-pages` which is capable of hosting a github page (i.e, the settings of the repository mention that contents of the gh-pages branch will be hosted - this again, was mentioned to us as an explicit requirement).
 
 ### Hosting of the current progress
 The current progress will be in the link `https://virtual-labs.github.io/${{github.repository}}/build`. The user can now click on this to open and view the current progress
 
+(Progress for workflow as per week of 13th March ends here)
 ---
 
 # Using a workflow for the web-extension
