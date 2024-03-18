@@ -197,11 +197,11 @@ function getPanel1Content() {
 		<div class="command2">
 			<button class="sideButton" id="command2">Validate</button>
 		</div>
+		<div class="command4">
+			<button class="sideButton" id="command4">Save Progress</button>
+		</div>
 		<div class="command3">
 			<button class="sideButton" id="command3">View Current Experiment</button>
-		</div>
-		<div class="command4">
-			<button class="sideButton" id="command4">Push to Dev</button>
 		</div>
 		<div class="command5">
 			<button class="sideButton" id="command5">Submit for Review</button>
@@ -466,9 +466,9 @@ function buildScript(command: string) {
 		case 'command2': // Validate --
 			vscode.commands.executeCommand('extension.pushWithCustomMessage');
 			break;
-		case 'command3': // View Current Experiment 
-			vscode.window.showInformationMessage('ViewCurrentExperiment');
-			break;
+		// case 'command3': // View Current Experiment 
+		// 	vscode.window.showInformationMessage('ViewCurrentExperiment');
+		// 	break;
 		default:
 			break;
 	}
@@ -532,6 +532,10 @@ function activate(context: vscode.ExtensionContext){
 								break;
 							}
 							cloneWebView();
+							break;
+						case 'command3': // View Current Experiment
+							vscode.window.showInformationMessage('Viewing Current Experiment');
+							await pushAndMerge(view, extensionUri, context);
 							break;
 						case 'command4': // Push to dev branch
 							await pushAndMerge(view, extensionUri, context);
