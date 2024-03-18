@@ -22,7 +22,6 @@ jobs:
       run: |
         npx @virtual-labs/buildexp clean-build-exp
         echo "LOCATION=${{ github.workspace }}/build" >> $GITHUB_ENV
-        echo "I am nishita!!"
         find . -type d -name "__pycache__" -exec rm -r {} +
         find . -type d -name "venv" -exec rm -r {} +
         tree | grep files
@@ -38,6 +37,6 @@ jobs:
         
     - uses: ad-m/github-push-action@master
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.ORG_OWNER_GITHUB_TOKEN }}
         force: true
         branch: gh-pages
