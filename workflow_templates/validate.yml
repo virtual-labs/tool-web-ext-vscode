@@ -1,7 +1,9 @@
-name: Lint Code Base
+name: Validate
 
 on:
   push:
+    branches:
+        dev
 
 jobs:
   lint:
@@ -23,4 +25,4 @@ jobs:
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git commit -m "Add new file with lint output"
-          git push origin lint-test
+          git push origin dev

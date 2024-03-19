@@ -197,11 +197,11 @@ function getPanel1Content() {
 		<div class="command2">
 			<button class="sideButton" id="command2">Validate</button>
 		</div>
-		<div class="command4">
-			<button class="sideButton" id="command4">Save Progress</button>
-		</div>
 		<div class="command3">
-			<button class="sideButton" id="command3">View Current Experiment</button>
+			<button class="sideButton" id="command3">Save Progress</button>
+		</div>
+		<div class="command4">
+			<button class="sideButton" id="command4">View Current Experiment</button>
 		</div>
 		<div class="command5">
 			<button class="sideButton" id="command5">Submit for Review</button>
@@ -322,7 +322,7 @@ function getWebviewContent() {	// const config = JSON.parse(fs.readFileSync(__di
 		</html>`;
 }
 
-function getWebviewFormContent() {
+function getPushInstructions() {
 	return `
 	<!DOCTYPE html>
 		<html lang="en">
@@ -359,7 +359,7 @@ function getWebviewFormContent() {
 		</html>`;
 }
 
-function getPRContent() {
+function getPullInstructions() {
 	return `
 	<!DOCTYPE html>
 		<html lang="en">
@@ -393,7 +393,6 @@ function getPRContent() {
 			<script>
 			const vscode = acquireVsCodeApi();
 			function pullRequest() {
-			
 			const title = document.getElementById("title").value;
 			const personalAccessToken = document.getElementById("personalAccessToken").value;
 			const description = document.getElementById("description").value;
@@ -413,7 +412,9 @@ function getPRContent() {
 		</html>`;
 }
 
-async function cloneWebView() {
+
+// Register command to initialize experiment
+vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 	const panel = vscode.window.createWebviewPanel(
 		'virtualLabs',
 		'Virtual Labs Experiment Authoring Environment',
@@ -423,92 +424,88 @@ async function cloneWebView() {
 		}
 	);
 	panel.webview.html = getWebviewContent();
-
 	panel.webview.onDidReceiveMessage(async (message) => {
 		switch (message.command) {
 			case 'clone':
 				{
-						const experimentName = message.experimentName;
-						const branch = message.branch;
-						const organization = message.organization;
-						const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
+					const experimentName = message.experimentName;
+					const branch = message.branch;
+					// const organization = message.organization;
+					const organization = "Dileepadari";
+					const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
 
-						// open remote repository from github using Remote repository vscode api extension 
-						// command: remoteHub.openRepository
-						vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
-						vscode.commands.executeCommand('RemoteHub.switchToBranch', )
-						vscode.window.showInformationMessage('Repository clone UI verified!');
-						panel.dispose();
-						break;
+					// open remote repository from github using Remote repository vscode api extension
+					vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
+					vscode.window.showInformationMessage('Experiment initialized successfully');
+					panel.dispose();
+					break;
 				}
 			default:
-				break;
-			}
+				vscode.window.showErrorMessage(`Unknown command: ${message.command}`);
+		}
 	});
-}
+});
 
-vscode.commands.registerCommand('extension.pushWithCustomMessage', async () => {
-    const commitMessage = await vscode.window.showInputBox({
-        prompt: 'Enter your commit message',
-        placeHolder: 'Type your commit message here...',
-    });
-
-    if (commitMessage) {
-        vscode.commands.executeCommand('remoteHub.openRepository', 'push', { commitMessage });
-    }
-	else {
-		vscode.window.showInformationMessage('Enter commit message !!!');
+// Register command for validation
+vscode.commands.registerCommand('extension.validate', async () => {
+	const channel = vscode.window.createOutputChannel("Validation Output");
+	channel.appendLine("Validating the experiment");
+	vscode.window.showInformationMessage('Validating the experiment');
+	try {
+		const result = await vscode.commands.executeCommand('workbench.action.tasks.runTask', 'validate');
+		if(await result){
+			channel.appendLine("Validation completed successfully");
+		}
+		vscode.window.showInformationMessage('Validation completed successfully');
+	} catch (error) {
+		channel.appendLine("Validation failed");
+		vscode.window.showErrorMessage('Validation failed');
+	} finally {
+		channel.show();
 	}
 });
 
-function buildScript(command: string) {
-	switch (command) {
-		case 'command2': // Validate --
-			vscode.commands.executeCommand('extension.pushWithCustomMessage');
-			break;
-		// case 'command3': // View Current Experiment 
-		// 	vscode.window.showInformationMessage('ViewCurrentExperiment');
-		// 	break;
-		default:
-			break;
-	}
-}
-
-async function pushAndMerge(view: vscode.WebviewView, extensionUri: vscode.Uri, context: vscode.ExtensionContext){
+// Register command to save experiment
+vscode.commands.registerCommand('extension.saveExperiment', async () => {
 	const panel = vscode.window.createWebviewPanel(
-		'vlabs.buildexp',
-		'User Details',
+		'virtualLabs',
+		'Save Progress',
 		vscode.ViewColumn.One,
 		{
 			enableScripts: true
 		}
 	);
-
-	panel.webview.html = getWebviewFormContent();
+	panel.webview.html = getPushInstructions();
 	vscode.commands.executeCommand('workbench.scm.focus');
-}
+	vscode.window.showInformationMessage('Please enter your commit message and push your changes');
+});
 
-function raisePR(view: vscode.WebviewView, extensionUri: vscode.Uri, context: vscode.ExtensionContext){
+// Register command to view current experiment
+vscode.commands.registerCommand('extension.viewCurrentExperiment', async () => {
+	vscode.commands.executeCommand('remoteHub.pull');
+	vscode.window.showInformationMessage('Pulling the changes');
+});
+
+// Register command to submit for review
+vscode.commands.registerCommand('extension.submitForReview', async () => {
 	const panel = vscode.window.createWebviewPanel(
-		'vlabs.buildexp',
+		'virtualLabs',
 		'Pull Request',
 		vscode.ViewColumn.One,
 		{
 			enableScripts: true
 		}
 	);
+	panel.webview.html = getPullInstructions();
+	vscode.commands.executeCommand('workbench.scm.focus');
+	vscode.window.showInformationMessage('Please enter your pull request title and personal access token');
+});
 
-	panel.webview.html = getPRContent();
-	panel.webview.onDidReceiveMessage(async (message) => {
-		switch (message.command) {
-			case 'pr':
-				vscode.window.showInformationMessage('Pull request UI testing');
-				panel.dispose();
-				break;
-		}
-	}, undefined, context.subscriptions);
-
-}
+// Register command for help
+vscode.commands.registerCommand('extension.help', async (extensionUri: vscode.Uri) => {
+	const path = vscode.Uri.joinPath(extensionUri,'src','README.md');
+	vscode.commands.executeCommand('markdown.showPreview', path);
+});
 
 
 // main code that starts everything else
@@ -523,45 +520,53 @@ function activate(context: vscode.ExtensionContext){
 				};
 				view.webview.html = getPanel1Content();
 				view.webview.onDidReceiveMessage(async (message) => {
-
 				// close webview panel after selection of a command
-					switch (message.command) {
-						case 'command1': // Initialize experiment
-							if (vscode.workspace.workspaceFolders === null){
-								vscode.window.showErrorMessage("Please open a directory in vscode");
-								break;
-							}
-							cloneWebView();
-							break;
-						case 'command3': // View Current Experiment
-							vscode.window.showInformationMessage('Viewing Current Experiment');
-							await pushAndMerge(view, extensionUri, context);
-							break;
-						case 'command4': // Push to dev branch
-							await pushAndMerge(view, extensionUri, context);
-							break;
-						case 'command5': // Submit for Review
-							raisePR(view, extensionUri, context);
-							break;
-						case 'command6': // Help
-							{
-								const path = 	vscode.Uri.joinPath(extensionUri, 'src', 'README.md');
-								vscode.commands.executeCommand('markdown.showPreview', path);
-								break;
-							}
-						default:
-							buildScript(message.command);
-							break;
-					}
+				switch (message.command) {
+					case 'command1': // Initialize experiment
+						vscode.commands.executeCommand('extension.initializeExperiment');
+						break;
+					case 'command2': // Validate
+						vscode.commands.executeCommand('extension.validate');
+						break;
+					case 'command3': // Save Experiment
+						vscode.commands.executeCommand('extension.saveExperiment');
+						break;
+					case 'command4': // View Current Experiment
+						vscode.commands.executeCommand('extension.viewCurrentExperiment');
+						break;
+					case 'command5': // Submit for Review
+						vscode.commands.executeCommand('extension.submitForReview');
+						break;
+					case 'command6': // Help
+						vscode.commands.executeCommand('extension.help', extensionUri);
+						break;
+					default:
+						break;
+				}
 			});
 		}}
 	);
 
 	context.subscriptions.push(
-        vscode.commands.registerCommand('extension.pushWithCustomMessage', () => {
-            vscode.commands.executeCommand('extension.pushWithCustomMessage');
-        })
-    );
+		vscode.commands.registerCommand('extension.initializeExperiment', () => {
+			vscode.commands.executeCommand('extension.initializeExperiment');
+		}),
+		vscode.commands.registerCommand('extension.validate', () => {
+			vscode.commands.executeCommand('extension.validate');
+		}),
+		vscode.commands.registerCommand('extension.saveExperiment', () => {
+			vscode.commands.executeCommand('extension.saveExperiment');
+		}),
+		vscode.commands.registerCommand('extension.viewCurrentExperiment', () => {
+			vscode.commands.executeCommand('extension.viewCurrentExperiment');
+		}),
+		vscode.commands.registerCommand('extension.submitForReview', () => {
+			vscode.commands.executeCommand('extension.submitForReview');
+		}),
+		vscode.commands.registerCommand('extension.help', () => {
+			vscode.commands.executeCommand('extension.help');
+		})
+	);
 }
 
 function deactivate() {}
