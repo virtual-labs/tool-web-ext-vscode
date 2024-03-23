@@ -262,7 +262,7 @@ function getWebviewContent() {	// const config = JSON.parse(fs.readFileSync(__di
 	// const organizations = config.organizations;
 	// const branchOptions = branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
 	const branchOptions = "dev";
-	const organizationOptions = "virtual-labs";
+	const organizationOptions = "PavitraPi";
 	// const organizationOptions = organizations.map(organization => `<option value="${organization}">${organization}</option>`).join('');
 
 
@@ -431,7 +431,7 @@ vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 					const experimentName = message.experimentName;
 					const branch = message.branch;
 					// const organization = message.organization;
-					const organization = "Dileepadari";
+					const organization = "PavitraPi";
 					const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
 
 					// open remote repository from github using Remote repository vscode api extension
