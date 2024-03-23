@@ -591,7 +591,6 @@ const ExecWorkflow = async () => {
 					pat = message.personalAccessToken;
 
 					// open remote repository from github using Remote repository vscode api extension 
-					vscode.window.showInformationMessage('View generated =!');
 					panel.dispose();
 
 					// repositoryName = repoUrl;
@@ -606,7 +605,7 @@ const ExecWorkflow = async () => {
 						workflow_id: 'main.yml',
 						ref: 'dev'
 					});
-
+					vscode.window.showInformationMessage(`https://virtual-labs.github.io/${{ repositoryName }}`);
 					break;
 				}
 			default:
