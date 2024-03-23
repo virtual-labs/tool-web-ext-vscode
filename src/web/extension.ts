@@ -548,24 +548,24 @@ function activate(context: vscode.ExtensionContext){
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('extension.initializeExperiment', () => {
-			vscode.commands.executeCommand('extension.initializeExperiment');
-		}),
-		vscode.commands.registerCommand('extension.validate', () => {
-			vscode.commands.executeCommand('extension.validate');
-		}),
-		vscode.commands.registerCommand('extension.saveExperiment', () => {
-			vscode.commands.executeCommand('extension.saveExperiment');
-		}),
-		vscode.commands.registerCommand('extension.viewCurrentExperiment', () => {
-			vscode.commands.executeCommand('extension.viewCurrentExperiment');
-		}),
-		vscode.commands.registerCommand('extension.submitForReview', () => {
-			vscode.commands.executeCommand('extension.submitForReview');
-		}),
-		vscode.commands.registerCommand('extension.help', () => {
-			vscode.commands.executeCommand('extension.help');
-		})
+		// vscode.commands.registerCommand('extension.initializeExperiment', () => {
+		// 	vscode.commands.executeCommand('extension.initializeExperiment');
+		// }),
+		// vscode.commands.registerCommand('extension.validate', () => {
+		// 	vscode.commands.executeCommand('extension.validate');
+		// }),
+		// vscode.commands.registerCommand('extension.saveExperiment', () => {
+		// 	vscode.commands.executeCommand('extension.saveExperiment');
+		// }),
+		// vscode.commands.registerCommand('extension.viewCurrentExperiment', () => {
+		// 	vscode.commands.executeCommand('extension.viewCurrentExperiment');
+		// }),
+		// vscode.commands.registerCommand('extension.submitForReview', () => {
+		// 	vscode.commands.executeCommand('extension.submitForReview');
+		// }),
+		// vscode.commands.registerCommand('extension.help', () => {
+		// 	vscode.commands.executeCommand('extension.help');
+		// })
 	);
 }
 
