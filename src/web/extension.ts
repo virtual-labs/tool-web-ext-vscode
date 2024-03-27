@@ -188,17 +188,36 @@ function getPanel1Content() {
 				align-items: center;
 				margin-left: 15%;
 			}
+			.loader {
+				border: 16px solid #f3f3f3;
+				border-top: 16px solid #3498db;
+				border-radius: 50%;
+				width: 50px;
+				height: 50px;
+				animation: spin 2s linear infinite;
+				display: none;
+				position: absolute;
+				top: 40%;
+				left: 30%;
+				transform: translate(-50%, -50%);
+				}
+				@keyframes spin {
+				0% { transform: rotate(0deg); }
+				100% { transform: rotate(360deg); }
+			  }
+			  
 			</style>
 			</head>
 		<body>
+		<div class="loader" id="loader"></div>
 		<div class="command1">
 		<button class="sideButton" id="command1">Initialize Experiment</button>
 		</div>
 		<div class="command2">
-			<button class="sideButton" id="command2">Validate</button>
+			<button class="sideButton" id="command2">save Progress</button>
 		</div>
 		<div class="command3">
-			<button class="sideButton" id="command3">Save Progress</button>
+			<button class="sideButton" id="command3">Validate</button>
 		</div>
 		<div class="command4">
 			<button class="sideButton" id="command4">View Current Experiment</button>
@@ -226,14 +245,34 @@ function getPanel1Content() {
 					command: 'command1'
 				});
 			});
+		command3.addEventListener('click', async () => {
+			await vscode.postMessage({
+				command: 'command3'
+			});
+			command1.disabled = true;
+			command2.disabled = true;
+			command3.disabled = true;
+			command4.disabled = true;
+			command5.disabled = true;
+			command6.disabled = true;
+			const loader = document.getElementById("loader");
+
+			loader.style.display = "block";
+
+			setTimeout(function() {
+				command1.disabled = false;
+				command3.disabled = false;
+				command2.disabled = false;
+				command4.disabled = false;
+				command5.disabled = false;
+				command6.disabled = false;
+
+				loader.style.display = 'none';
+			}, 35000);
+		});
 		command2.addEventListener('click', () => {
 			vscode.postMessage({
 				command: 'command2'
-			});
-		});
-		command3.addEventListener('click', () => {
-			vscode.postMessage({
-				command: 'command3'
 			});
 		});
 		command4.addEventListener('click', () => {
@@ -435,8 +474,8 @@ vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 					const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
 
 					// open remote repository from github using Remote repository vscode api extension
-					vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
-					vscode.window.showInformationMessage('Experiment initialized successfully');
+					await vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
+					vscode.window.showInformationMessage('Experiment initializing successfully');
 					panel.dispose();
 					break;
 				}
@@ -448,20 +487,24 @@ vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 
 // Register command for validation
 vscode.commands.registerCommand('extension.validate', async () => {
-	const channel = vscode.window.createOutputChannel("Validation Output");
-	channel.appendLine("Validating the experiment");
+
 	vscode.window.showInformationMessage('Validating the experiment');
 	try {
-		const result = await vscode.commands.executeCommand('workbench.action.tasks.runTask', 'validate');
-		if(await result){
-			channel.appendLine("Validation completed successfully");
-		}
-		vscode.window.showInformationMessage('Validation completed successfully');
+		// run the validation script
+		
+		vscode.window.showInformationMessage('Validation started successfully');
+		setTimeout(async () => {
+			const workspaceFolders = vscode.workspace.workspaceFolders;
+			if (workspaceFolders && workspaceFolders.length > 0) {
+				await vscode.commands.executeCommand('remoteHub.pull');
+				vscode.window.showInformationMessage('Select lint.txt from the list to see validation results.');
+				await vscode.commands.executeCommand('workbench.action.files.openFile');
+			} else {
+				vscode.window.showErrorMessage("No workspace folder found.");
+			}
+		}, 35000);
 	} catch (error) {
-		channel.appendLine("Validation failed");
 		vscode.window.showErrorMessage('Validation failed');
-	} finally {
-		channel.show();
 	}
 });
 
@@ -476,8 +519,9 @@ vscode.commands.registerCommand('extension.saveExperiment', async () => {
 		}
 	);
 	panel.webview.html = getPushInstructions();
-	vscode.commands.executeCommand('workbench.scm.focus');
 	vscode.window.showInformationMessage('Please enter your commit message and push your changes');
+	await vscode.commands.executeCommand('workbench.scm.focus');
+	await vscode.window.showInformationMessage('Successfully saved');
 });
 
 // Register command to view current experiment
@@ -497,8 +541,8 @@ vscode.commands.registerCommand('extension.submitForReview', async () => {
 		}
 	);
 	panel.webview.html = getPullInstructions();
-	vscode.commands.executeCommand('workbench.scm.focus');
-	vscode.window.showInformationMessage('Please enter your pull request title and personal access token');
+	await vscode.commands.executeCommand('workbench.scm.focus');
+	await vscode.window.showInformationMessage('Please enter your pull request title and personal access token');
 });
 
 // Register command for help
@@ -525,10 +569,10 @@ function activate(context: vscode.ExtensionContext){
 					case 'command1': // Initialize experiment
 						vscode.commands.executeCommand('extension.initializeExperiment');
 						break;
-					case 'command2': // Validate
+					case 'command3': // Validate
 						vscode.commands.executeCommand('extension.validate');
 						break;
-					case 'command3': // Save Experiment
+					case 'command2': // Save Experiment
 						vscode.commands.executeCommand('extension.saveExperiment');
 						break;
 					case 'command4': // View Current Experiment
@@ -545,27 +589,6 @@ function activate(context: vscode.ExtensionContext){
 				}
 			});
 		}}
-	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand('extension.initializeExperiment', () => {
-			vscode.commands.executeCommand('extension.initializeExperiment');
-		}),
-		vscode.commands.registerCommand('extension.validate', () => {
-			vscode.commands.executeCommand('extension.validate');
-		}),
-		vscode.commands.registerCommand('extension.saveExperiment', () => {
-			vscode.commands.executeCommand('extension.saveExperiment');
-		}),
-		vscode.commands.registerCommand('extension.viewCurrentExperiment', () => {
-			vscode.commands.executeCommand('extension.viewCurrentExperiment');
-		}),
-		vscode.commands.registerCommand('extension.submitForReview', () => {
-			vscode.commands.executeCommand('extension.submitForReview');
-		}),
-		vscode.commands.registerCommand('extension.help', () => {
-			vscode.commands.executeCommand('extension.help');
-		})
 	);
 }
 
