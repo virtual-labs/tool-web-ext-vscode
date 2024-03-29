@@ -319,7 +319,7 @@ function getWebviewContent() {	// const config = JSON.parse(fs.readFileSync(__di
 			<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
 			<title>Virtual Labs Experiment Authoring Environment</title>
 			<style>
-			`+ commonCss +`
+			`+ commonCss + `
 			</style>
 			</head>
 
@@ -375,7 +375,7 @@ function getPushInstructions() {
 			<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
 			<title>Virtual Labs Experiment Authoring Environment</title>
 			<style>
-			`+ commonCss +`
+			`+ commonCss + `
 		</style>
 		</head>
 
@@ -412,7 +412,7 @@ function getPullInstructions() {
 			<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
 			<title>Virtual Labs Experiment Authoring Environment</title>
 			<style>
-			`+ commonCss +`
+			`+ commonCss + `
 			</style>
 			</head>
 
@@ -473,12 +473,16 @@ function ViewCurrentExperimentHTML() {
 			<div class="Organization">
 				<label for="userName">Github User Name</label>
 				<input type="text" id="userName" name="userName">
-				
-				
 			</div>
-			<div class="Experiment">
+				
+			<div class="Branch">
 				<label for="personalAccessToken">Personal Access Token</label>
 				<input type="text" id="personalAccessToken" name="personalAccessToken">
+			</div>
+				
+			<div class="Experiment">
+				<label for="repoName">Experiment Repository Name</label>
+				<input type="text" id="repoName" name="repoName">
 			</div>
 			<button id="VCE" class="bigButton">Submit</button>
 			
@@ -489,10 +493,12 @@ function ViewCurrentExperimentHTML() {
 			
 			const userName = document.getElementById("userName").value;
 			const personalAccessToken = document.getElementById("personalAccessToken").value;
+			const repoName = document.getElementById("repoName").value;
 			vscode.postMessage({
 				command: 'VCE',
 				userName: userName,
 				personalAccessToken: personalAccessToken,
+				repoName: repoName,
 			});
 			}
 
@@ -525,7 +531,8 @@ vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 					const experimentName = message.experimentName;
 					const branch = message.branch;
 					// const organization = message.organization;
-					const organization = "Dileepadari";
+					// const organization = "Dileepadari";
+					const organization = "virtual-labs";
 					const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
 					repositoryName = experimentName;
 
@@ -547,7 +554,7 @@ vscode.commands.registerCommand('extension.validate', async () => {
 	vscode.window.showInformationMessage('Validating the experiment');
 	try {
 		// run the validation script
-		
+
 		vscode.window.showInformationMessage('Validation started successfully');
 		setTimeout(async () => {
 			const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -600,13 +607,16 @@ const ExecWorkflow = async () => {
 	panel.webview.html = ViewCurrentExperimentHTML();
 
 	let pat = "";
-	let userName = "";
+	// let userName = "";
 	panel.webview.onDidReceiveMessage(async (message) => {
 		switch (message.command) {
 			case 'VCE':
 				{
-					userName = message.userName;
+					// userName = message.userName;
 					pat = message.personalAccessToken;
+					// repositoryName = "exp-dummy-experiment1-iiith";
+					repositoryName = message.repoName;
+					vscode.window.showInformationMessage(`https://virtual-labs.github.io/${{ repositoryName }}/build`);
 
 					// open remote repository from github using Remote repository vscode api extension 
 					panel.dispose();
@@ -617,19 +627,18 @@ const ExecWorkflow = async () => {
 					});
 
 					await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
-						owner: userName,
+						owner: "virtual-labs",
 						repo: repositoryName,
-						// repo: 'experiment',
-						workflow_id: 'main.yml',
+						// repo: 'exp-dummy-experiment1-iiith',
+						workflow_id: 'scripts.yml',
 						ref: 'dev'
 					});
-					vscode.window.showInformationMessage(`https://virtual-labs.github.io/${{ repositoryName }}`);
 					break;
 				}
-			default:
-				break;
-		}
-	});
+				default:
+					break;
+				}
+			});
 	// console.log("ExecWorkflow");
 };
 
@@ -650,13 +659,13 @@ vscode.commands.registerCommand('extension.submitForReview', async () => {
 
 // Register command for help
 vscode.commands.registerCommand('extension.help', async (extensionUri: vscode.Uri) => {
-	const path = vscode.Uri.joinPath(extensionUri,'src','README.md');
+	const path = vscode.Uri.joinPath(extensionUri, 'src', 'README.md');
 	vscode.commands.executeCommand('markdown.showPreview', path);
 });
 
 
 // main code that starts everything else
-function activate(context: vscode.ExtensionContext){
+function activate(context: vscode.ExtensionContext) {
 	const extensionUri = context.extensionUri;
 	vscode.window.registerWebviewViewProvider(
 		'vlabs.experimentView',
@@ -667,36 +676,37 @@ function activate(context: vscode.ExtensionContext){
 				};
 				view.webview.html = getPanel1Content();
 				view.webview.onDidReceiveMessage(async (message) => {
-				// close webview panel after selection of a command
-				switch (message.command) {
-					case 'command1': // Initialize experiment
-						vscode.commands.executeCommand('extension.initializeExperiment');
-						break;
-					case 'command3': // Validate
-						vscode.commands.executeCommand('extension.validate');
-						break;
-					case 'command2': // Save Experiment
-						vscode.commands.executeCommand('extension.saveExperiment');
-						break;
-					case 'command4': // View Current Experiment
-						vscode.commands.executeCommand('extension.viewCurrentExperiment');
-						ExecWorkflow();
-						break;
-					case 'command5': // Submit for Review
-						vscode.commands.executeCommand('extension.submitForReview');
-						break;
-					case 'command6': // Help
-						vscode.commands.executeCommand('extension.help', extensionUri);
-						break;
-					default:
-						break;
-				}
-			});
-		}}
+					// close webview panel after selection of a command
+					switch (message.command) {
+						case 'command1': // Initialize experiment
+							vscode.commands.executeCommand('extension.initializeExperiment');
+							break;
+						case 'command3': // Validate
+							vscode.commands.executeCommand('extension.validate');
+							break;
+						case 'command2': // Save Experiment
+							vscode.commands.executeCommand('extension.saveExperiment');
+							break;
+						case 'command4': // View Current Experiment
+							// vscode.commands.executeCommand('extension.viewCurrentExperiment');
+							ExecWorkflow();
+							break;
+						case 'command5': // Submit for Review
+							vscode.commands.executeCommand('extension.submitForReview');
+							break;
+						case 'command6': // Help
+							vscode.commands.executeCommand('extension.help', extensionUri);
+							break;
+						default:
+							break;
+					}
+				});
+			}
+		}
 	);
 }
 
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
 	activate,
