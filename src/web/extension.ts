@@ -1,4 +1,8 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
+// import axios from 'axios';
+// import { StatusCodes } from 'http-status-codes';
+import { Octokit } from 'octokit';
 
 // common css
 const commonCss = `h1 {
@@ -342,7 +346,6 @@ function getWebviewContent() {	// const config = JSON.parse(fs.readFileSync(__di
 			const vscode = acquireVsCodeApi();
 
 			function clone() {
-			
 			const experimentName = document.getElementById("experimentName").value;
 			const organization = document.getElementById("organization").value;
 			const branch = document.getElementById("branch").value;
@@ -451,7 +454,58 @@ function getPullInstructions() {
 		</html>`;
 }
 
+function ViewCurrentExperimentHTML() {
+	return `
+	<!DOCTYPE html>
+		<html lang="en">
 
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Virtual Labs Experiment Authoring Environment</title>
+			<style>
+			`+ commonCss + `
+			</style>
+		</head>
+
+		<body>
+			<h1>Virtual Labs Experiment Authoring Environment</h1>
+			<div class="Organization">
+				<label for="userName">Github User Name</label>
+				<input type="text" id="userName" name="userName">
+				
+				
+			</div>
+			<div class="Experiment">
+				<label for="personalAccessToken">Personal Access Token</label>
+				<input type="text" id="personalAccessToken" name="personalAccessToken">
+			</div>
+			<button id="VCE" class="bigButton">Submit</button>
+			
+			<script>
+			const vscode = acquireVsCodeApi();
+
+			function VCE() {
+			
+			const userName = document.getElementById("userName").value;
+			const personalAccessToken = document.getElementById("personalAccessToken").value;
+			vscode.postMessage({
+				command: 'VCE',
+				userName: userName,
+				personalAccessToken: personalAccessToken,
+			});
+			}
+
+			const submitButton = document.getElementById('VCE');
+			submitButton.addEventListener('click', VCE);
+
+			</script>
+		</body>
+
+		</html>`;
+}
+
+let repositoryName = "";
 // Register command to initialize experiment
 vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 	const panel = vscode.window.createWebviewPanel(
@@ -462,6 +516,7 @@ vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 			enableScripts: true
 		}
 	);
+
 	panel.webview.html = getWebviewContent();
 	panel.webview.onDidReceiveMessage(async (message) => {
 		switch (message.command) {
@@ -472,6 +527,7 @@ vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 					// const organization = message.organization;
 					const organization = "Dileepadari";
 					const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
+					repositoryName = experimentName;
 
 					// open remote repository from github using Remote repository vscode api extension
 					await vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
@@ -525,10 +581,57 @@ vscode.commands.registerCommand('extension.saveExperiment', async () => {
 });
 
 // Register command to view current experiment
-vscode.commands.registerCommand('extension.viewCurrentExperiment', async () => {
-	vscode.commands.executeCommand('remoteHub.pull');
-	vscode.window.showInformationMessage('Pulling the changes');
-});
+// vscode.commands.registerCommand('extension.viewCurrentExperiment', async () => {
+// 	vscode.commands.executeCommand('remoteHub.pull');
+// 	vscode.window.showInformationMessage('Pulling the changes');
+// });
+
+
+const ExecWorkflow = async () => {
+
+	const panel = vscode.window.createWebviewPanel(
+		'virtualLabs',
+		'Virtual Labs Experiment Authoring Environment',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true
+		}
+	);
+	panel.webview.html = ViewCurrentExperimentHTML();
+
+	let pat = "";
+	let userName = "";
+	panel.webview.onDidReceiveMessage(async (message) => {
+		switch (message.command) {
+			case 'VCE':
+				{
+					userName = message.userName;
+					pat = message.personalAccessToken;
+
+					// open remote repository from github using Remote repository vscode api extension 
+					panel.dispose();
+
+					// repositoryName = repoUrl;
+					const octokit = new Octokit({
+						auth: pat,
+					});
+
+					await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+						owner: userName,
+						repo: repositoryName,
+						// repo: 'experiment',
+						workflow_id: 'main.yml',
+						ref: 'dev'
+					});
+					vscode.window.showInformationMessage(`https://virtual-labs.github.io/${{ repositoryName }}`);
+					break;
+				}
+			default:
+				break;
+		}
+	});
+	// console.log("ExecWorkflow");
+};
 
 // Register command to submit for review
 vscode.commands.registerCommand('extension.submitForReview', async () => {
@@ -577,6 +680,7 @@ function activate(context: vscode.ExtensionContext){
 						break;
 					case 'command4': // View Current Experiment
 						vscode.commands.executeCommand('extension.viewCurrentExperiment');
+						ExecWorkflow();
 						break;
 					case 'command5': // Submit for Review
 						vscode.commands.executeCommand('extension.submitForReview');
