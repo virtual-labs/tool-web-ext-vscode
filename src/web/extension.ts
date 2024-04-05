@@ -511,9 +511,9 @@ function ViewCurrentExperimentHTML() {
 		</html>`;
 }
 
-let repositoryName = "";
+let repositoryName : string | undefined = "";
 // Register command to initialize experiment
-vscode.commands.registerCommand('extension.initializeExperiment', async () => {
+vscode.commands.registerCommand('extension.initializeExperiment', async (context: vscode.ExtensionContext) => {
 	const panel = vscode.window.createWebviewPanel(
 		'virtualLabs',
 		'Virtual Labs Experiment Authoring Environment',
@@ -535,6 +535,7 @@ vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 					const organization = "virtual-labs";
 					const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
 					repositoryName = experimentName;
+					context.globalState.update('key', repositoryName);
 
 					// open remote repository from github using Remote repository vscode api extension
 					await vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
@@ -549,7 +550,7 @@ vscode.commands.registerCommand('extension.initializeExperiment', async () => {
 });
 
 // Register command for validation
-vscode.commands.registerCommand('extension.validate', async () => {
+vscode.commands.registerCommand('extension.validate', async (context: vscode.ExtensionContext) => {
 
 	vscode.window.showInformationMessage('Validating the experiment');
 	try {
@@ -557,7 +558,17 @@ vscode.commands.registerCommand('extension.validate', async () => {
 
 		vscode.window.showInformationMessage('Validation started successfully');
 		setTimeout(async () => {
+			repositoryName = context.globalState.get('key');
+			const repos : string = repositoryName as string;
 			const workspaceFolders = vscode.workspace.workspaceFolders;
+			const octokit = new Octokit();
+			await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+				owner: "virtual-labs",
+				repo: repos,
+				// repo: 'exp-dummy-experiment1-iiith',
+				workflow_id: 'validate.yml',
+				ref: 'dev'
+			});
 			if (workspaceFolders && workspaceFolders.length > 0) {
 				await vscode.commands.executeCommand('remoteHub.pull');
 				vscode.window.showInformationMessage('Select lint.txt from the list to see validation results.');
@@ -594,7 +605,7 @@ vscode.commands.registerCommand('extension.saveExperiment', async () => {
 // });
 
 
-const ExecWorkflow = async () => {
+const ExecWorkflow = async (context: vscode.ExtensionContext) => {
 
 	const panel = vscode.window.createWebviewPanel(
 		'virtualLabs',
@@ -616,8 +627,9 @@ const ExecWorkflow = async () => {
 					pat = message.personalAccessToken;
 					// repositoryName = "exp-dummy-experiment1-iiith";
 					repositoryName = message.repoName;
+					context.globalState.update('key', repositoryName);
 					vscode.window.showInformationMessage(`https://virtual-labs.github.io/${{ repositoryName }}/build`);
-
+					const repos : string = repositoryName as string;
 					// open remote repository from github using Remote repository vscode api extension 
 					panel.dispose();
 
@@ -628,7 +640,7 @@ const ExecWorkflow = async () => {
 
 					await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
 						owner: "virtual-labs",
-						repo: repositoryName,
+						repo: repos,
 						// repo: 'exp-dummy-experiment1-iiith',
 						workflow_id: 'scripts.yml',
 						ref: 'dev'
@@ -679,17 +691,17 @@ function activate(context: vscode.ExtensionContext) {
 					// close webview panel after selection of a command
 					switch (message.command) {
 						case 'command1': // Initialize experiment
-							vscode.commands.executeCommand('extension.initializeExperiment');
+							vscode.commands.executeCommand('extension.initializeExperiment', context);
 							break;
 						case 'command3': // Validate
-							vscode.commands.executeCommand('extension.validate');
+							vscode.commands.executeCommand('extension.validate', context);
 							break;
 						case 'command2': // Save Experiment
 							vscode.commands.executeCommand('extension.saveExperiment');
 							break;
 						case 'command4': // View Current Experiment
 							// vscode.commands.executeCommand('extension.viewCurrentExperiment');
-							ExecWorkflow();
+							ExecWorkflow(context);
 							break;
 						case 'command5': // Submit for Review
 							vscode.commands.executeCommand('extension.submitForReview');
