@@ -573,38 +573,47 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 			// repo: 'exp-dummy-experiment1-iiith',
 			workflow_id: 'validate.yml',
 			ref: 'dev'
-		});
-		const running_status = setInterval(async () => {
-		if (workspaceFolders && workspaceFolders.length > 0) {
-			await octokit.request('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
-				owner: 'virtual-labs',
-				repo: repos,
-				// repo: 'exp-dummy-experiment1-iiith',
-				workflow_id: 'validate.yml',
-				headers: {
-				'X-GitHub-Api-Version': '2022-11-28'
-				}
-			}).then(async (response) => {
-				const runstatus = response.data.workflow_runs[0].status;
-				if (runstatus === 'completed') {
-					vscode.window.showInformationMessage('Validation completed successfully');
-					await vscode.commands.executeCommand('remoteHub.pull');
-					vscode.window.showInformationMessage('Select lint.txt from the list to see validation results.');
-					await vscode.commands.executeCommand('workbench.action.files.openFile', vscode.Uri.file(`${workspaceFolders[0].uri.path}/lint.txt`));
-					clearInterval(running_status);
-				}
-				else if(runstatus === 'Failed'){
-					vscode.window.showErrorMessage('Validation failed');
-					clearInterval(running_status);
-				}
-				else {
-					vscode.window.showInformationMessage('Validation in progress, Stay with Us for some more secs');
-				}
-			} );
-			} else {
-				vscode.window.showErrorMessage("No workspace folder found.");
+		}).then((response) => {
+			if(response.status === 204){
+				vscode.window.showInformationMessage('Validation started successfully');
+				const running_status = setInterval(async () => {
+					if (workspaceFolders && workspaceFolders.length > 0) {
+						await octokit.request('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
+							owner: 'virtual-labs',
+							repo: repos,
+							// repo: 'exp-dummy-experiment1-iiith',
+							workflow_id: 'validate.yml',
+							headers: {
+							'X-GitHub-Api-Version': '2022-11-28'
+							}
+						}).then(async (response) => {
+							const runstatus = response.data.workflow_runs[0].status;
+							if (runstatus === 'completed') {
+								vscode.window.showInformationMessage('Validation completed successfully');
+								await vscode.commands.executeCommand('remoteHub.pull');
+								vscode.window.showInformationMessage('Select lint.txt from the list to see validation results.');
+								await vscode.commands.executeCommand('workbench.action.files.openFile', vscode.Uri.file(`${workspaceFolders[0].uri.path}/lint.txt`));
+								clearInterval(running_status);
+							}
+							else if(runstatus === 'Failed'){
+								vscode.window.showErrorMessage('Validation failed');
+								clearInterval(running_status);
+							}
+							else {
+								vscode.window.showInformationMessage('Validation in progress, Stay with Us for some more secs');
+							}
+						} );
+						} else {
+							vscode.window.showErrorMessage("No workspace folder found.");
+						}
+					}, 10000);
 			}
-		}, 10000);
+			else{
+				vscode.window.showErrorMessage('Validation failed');
+			}
+	}).catch(() =>{
+		vscode.window.showErrorMessage('Validation failed');
+	});
 });
 
 // Register command to save experiment
