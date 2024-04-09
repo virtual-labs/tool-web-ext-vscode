@@ -260,26 +260,10 @@ function getPanel1Content() {
 			await vscode.postMessage({
 				command: 'command3'
 			});
-			command1.disabled = true;
-			command2.disabled = true;
 			command3.disabled = true;
-			command4.disabled = true;
-			command5.disabled = true;
-			command6.disabled = true;
-			const loader = document.getElementById("loader");
-
-			loader.style.display = "block";
-
 			setTimeout(function() {
-				command1.disabled = false;
 				command3.disabled = false;
-				command2.disabled = false;
-				command4.disabled = false;
-				command5.disabled = false;
-				command6.disabled = false;
-
-				loader.style.display = 'none';
-			}, 35000);
+			}, 20000);
 		});
 		command2.addEventListener('click', () => {
 			vscode.postMessage({
@@ -590,18 +574,37 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 			workflow_id: 'validate.yml',
 			ref: 'dev'
 		});
-		setTimeout(async () => {
+		const running_status = setInterval(async () => {
 		if (workspaceFolders && workspaceFolders.length > 0) {
-				await vscode.commands.executeCommand('remoteHub.pull');
-				vscode.window.showInformationMessage('Select lint.txt from the list to see validation results.');
-				await vscode.commands.executeCommand('workbench.action.files.openFile');
+			await octokit.request('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
+				owner: 'virtual-labs',
+				repo: repos,
+				// repo: 'exp-dummy-experiment1-iiith',
+				workflow_id: 'validate.yml',
+				headers: {
+				'X-GitHub-Api-Version': '2022-11-28'
+				}
+			}).then(async (response) => {
+				const runstatus = response.data.workflow_runs[0].status;
+				if (runstatus === 'completed') {
+					vscode.window.showInformationMessage('Validation completed successfully');
+					await vscode.commands.executeCommand('remoteHub.pull');
+					vscode.window.showInformationMessage('Select lint.txt from the list to see validation results.');
+					await vscode.commands.executeCommand('workbench.action.files.openFile', vscode.Uri.file(`${workspaceFolders[0].uri.path}/lint.txt`));
+					clearInterval(running_status);
+				}
+				else if(runstatus === 'Failed'){
+					vscode.window.showErrorMessage('Validation failed');
+					clearInterval(running_status);
+				}
+				else {
+					vscode.window.showInformationMessage('Validation in progress, Stay with Us for some more secs');
+				}
+			} );
 			} else {
 				vscode.window.showErrorMessage("No workspace folder found.");
 			}
-		}, 35000);
-	// } catch (error) {
-	// 	vscode.window.showErrorMessage('Validation failed');
-	// }
+		}, 10000);
 });
 
 // Register command to save experiment
