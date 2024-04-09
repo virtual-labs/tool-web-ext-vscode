@@ -36,6 +36,13 @@ const commonCss = `h1 {
 	font-weight: bold;
 }
 
+.token{
+		margin: auto;
+		width: 60%;
+		border: 3px solid #73AD21;
+		padding: 10px;
+		font-weight: bold;
+}
 
 .bigButton {
 	margin: 0;
@@ -300,7 +307,7 @@ function getPanel1Content() {
 		`;
 }
 
-function getWebviewContent() {	// const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
+function getWebviewContent(context: vscode.ExtensionContext) {	// const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
 	// const branches = config.branches;
 	// const organizations = config.organizations;
 	// const branchOptions = branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
@@ -341,6 +348,12 @@ function getWebviewContent() {	// const config = JSON.parse(fs.readFileSync(__di
 				<input id="branch" name="branch" type="text" value="${branchOptions}" disabled>
 				</div>
 			</div>
+			<div class="token">
+				<label for="token">Token</label>
+				<div class="select-container">
+				<input id="token" name="token" type="text" value="${context.globalState.get('accesstoken') === undefined ? "" :  context.globalState.get('accesstoken')}">
+				</div>
+			</div>
 			<button id="submit" class="bigButton">Submit</button>
 			<script>
 			const vscode = acquireVsCodeApi();
@@ -349,11 +362,13 @@ function getWebviewContent() {	// const config = JSON.parse(fs.readFileSync(__di
 			const experimentName = document.getElementById("experimentName").value;
 			const organization = document.getElementById("organization").value;
 			const branch = document.getElementById("branch").value;
+			const token = document.getElementById("token").value;
 			vscode.postMessage({
 				command: 'clone',
 				experimentName: experimentName,
 				organization: organization,
-				branch: branch
+				branch: branch,
+				token: token
 			});
 			}
 			const submitButton = document.getElementById('submit');
@@ -447,72 +462,73 @@ function getPullInstructions() {
 			}
 			const submitButton = document.getElementById('pr');
 			submitButton.addEventListener('click', pullRequest);
-
+			
 			</script>
-		</body>
-
-		</html>`;
-}
-
-function ViewCurrentExperimentHTML() {
-	return `
-	<!DOCTYPE html>
-		<html lang="en">
-
-		<head>
+			</body>
+			
+			</html>`;
+		}
+		
+		function ViewCurrentExperimentHTML() {
+			return `
+			<!DOCTYPE html>
+			<html lang="en">
+			
+			<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title>Virtual Labs Experiment Authoring Environment</title>
 			<style>
 			`+ commonCss + `
 			</style>
-		</head>
-
-		<body>
+			</head>
+			
+			<body>
 			<h1>Virtual Labs Experiment Authoring Environment</h1>
 			<div class="Organization">
-				<label for="userName">Github User Name</label>
-				<input type="text" id="userName" name="userName">
+			<label for="userName">Github User Name</label>
+			<input type="text" id="userName" name="userName">
 			</div>
-				
+			
 			<div class="Branch">
-				<label for="personalAccessToken">Personal Access Token</label>
-				<input type="text" id="personalAccessToken" name="personalAccessToken">
+			<label for="personalAccessToken">Personal Access Token</label>
+			<input type="text" id="personalAccessToken" name="personalAccessToken">
 			</div>
 				
 			<div class="Experiment">
-				<label for="repoName">Experiment Repository Name</label>
-				<input type="text" id="repoName" name="repoName">
+			<label for="repoName">Experiment Repository Name</label>
+			<input type="text" id="repoName" name="repoName">
 			</div>
 			<button id="VCE" class="bigButton">Submit</button>
 			
 			<script>
 			const vscode = acquireVsCodeApi();
-
-			function VCE() {
 			
-			const userName = document.getElementById("userName").value;
-			const personalAccessToken = document.getElementById("personalAccessToken").value;
-			const repoName = document.getElementById("repoName").value;
-			vscode.postMessage({
-				command: 'VCE',
-				userName: userName,
-				personalAccessToken: personalAccessToken,
-				repoName: repoName,
-			});
+			function VCE() {
+				
+				const userName = document.getElementById("userName").value;
+				const personalAccessToken = document.getElementById("personalAccessToken").value;
+				const repoName = document.getElementById("repoName").value;
+				vscode.postMessage({
+					command: 'VCE',
+					userName: userName,
+					personalAccessToken: personalAccessToken,
+					repoName: repoName,
+				});
 			}
-
+			
 			const submitButton = document.getElementById('VCE');
 			submitButton.addEventListener('click', VCE);
-
+			
 			</script>
-		</body>
-
-		</html>`;
-}
-
+			</body>
+			
+			</html>`;
+		}
+		
 let repositoryName : string | undefined = "";
-// Register command to initialize experiment
+let pat = "";
+		// Register command to initialize experiment
 vscode.commands.registerCommand('extension.initializeExperiment', async (context: vscode.ExtensionContext) => {
 	const panel = vscode.window.createWebviewPanel(
 		'virtualLabs',
@@ -521,55 +537,61 @@ vscode.commands.registerCommand('extension.initializeExperiment', async (context
 		{
 			enableScripts: true
 		}
-	);
+		);
 
-	panel.webview.html = getWebviewContent();
-	panel.webview.onDidReceiveMessage(async (message) => {
-		switch (message.command) {
-			case 'clone':
-				{
-					const experimentName = message.experimentName;
-					const branch = message.branch;
-					// const organization = message.organization;
-					// const organization = "Dileepadari";
-					const organization = "virtual-labs";
-					const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
-					repositoryName = experimentName;
-					context.globalState.update('key', repositoryName);
+		panel.webview.html = getWebviewContent(context);
+		panel.webview.onDidReceiveMessage(async (message) => {
+			switch (message.command) {
+				case 'clone':
+		{
+			const experimentName = message.experimentName;
+			const branch = message.branch;
+			// const organization = message.organization;
+			// const organization = "Dileepadari";
+			const organization = "virtual-labs";
+			const repoUrl = `https://github.com/${organization}/${experimentName}/tree/${branch}`;
 
-					// open remote repository from github using Remote repository vscode api extension
-					await vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
-					vscode.window.showInformationMessage('Experiment initializing successfully');
-					panel.dispose();
-					break;
-				}
-			default:
-				vscode.window.showErrorMessage(`Unknown command: ${message.command}`);
+			repositoryName = experimentName;
+			context.globalState.update('key', repositoryName);
+			context.globalState.update('accesstoken', message.token);
+			pat = message.token;
+
+			// open remote repository from github using Remote repository vscode api extension
+			await vscode.commands.executeCommand('remoteHub.openRepository', repoUrl);
+			vscode.window.showInformationMessage('Experiment initializing successfully');
+			panel.dispose();
+			break;
+		}
+		default:
+			vscode.window.showErrorMessage(`Unknown command: ${message.command}`);
 		}
 	});
 });
 
 // Register command for validation
 vscode.commands.registerCommand('extension.validate', async (context: vscode.ExtensionContext) => {
-
 	vscode.window.showInformationMessage('Validating the experiment');
-	try {
+	// try {
 		// run the validation script
-
+		const actoken = context.globalState.get('accesstoken');
+		pat = actoken as string; // access token is stored in global state when user
 		vscode.window.showInformationMessage('Validation started successfully');
+		repositoryName = context.globalState.get('key');
+		const repos : string = repositoryName as string;
+		const workspaceFolders = vscode.workspace.workspaceFolders;
+		const octokit = new Octokit({
+			auth: pat,
+		});
+
+		await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+			owner: "virtual-labs",
+			repo: repos,
+			// repo: 'exp-dummy-experiment1-iiith',
+			workflow_id: 'validate.yml',
+			ref: 'dev'
+		});
 		setTimeout(async () => {
-			repositoryName = context.globalState.get('key');
-			const repos : string = repositoryName as string;
-			const workspaceFolders = vscode.workspace.workspaceFolders;
-			const octokit = new Octokit();
-			await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
-				owner: "virtual-labs",
-				repo: repos,
-				// repo: 'exp-dummy-experiment1-iiith',
-				workflow_id: 'validate.yml',
-				ref: 'dev'
-			});
-			if (workspaceFolders && workspaceFolders.length > 0) {
+		if (workspaceFolders && workspaceFolders.length > 0) {
 				await vscode.commands.executeCommand('remoteHub.pull');
 				vscode.window.showInformationMessage('Select lint.txt from the list to see validation results.');
 				await vscode.commands.executeCommand('workbench.action.files.openFile');
@@ -577,9 +599,9 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 				vscode.window.showErrorMessage("No workspace folder found.");
 			}
 		}, 35000);
-	} catch (error) {
-		vscode.window.showErrorMessage('Validation failed');
-	}
+	// } catch (error) {
+	// 	vscode.window.showErrorMessage('Validation failed');
+	// }
 });
 
 // Register command to save experiment
@@ -617,7 +639,6 @@ const ExecWorkflow = async (context: vscode.ExtensionContext) => {
 	);
 	panel.webview.html = ViewCurrentExperimentHTML();
 
-	let pat = "";
 	// let userName = "";
 	panel.webview.onDidReceiveMessage(async (message) => {
 		switch (message.command) {
