@@ -601,7 +601,7 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 								clearInterval(running_status);
 							}
 							else {
-								vscode.window.showInformationMessage('Validation in progress, Stay with Us for some more secs');
+								vscode.window.showInformationMessage('Validation in progress');
 							}
 						} );
 						} else {
@@ -692,7 +692,7 @@ const MergeAndExec = async (context: vscode.ExtensionContext) => {
 											clearInterval(running_status);
 										}
 										else {
-											vscode.window.showInformationMessage('build in progress, Stay with Us for some more secs');
+											vscode.window.showInformationMessage('Build in progress');
 										}
 									} );
 									} else {
