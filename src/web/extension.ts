@@ -218,7 +218,7 @@ function getPanel1Content() {
 		<button class="sideButton" id="command1">Initialize Experiment</button>
 		</div>
 		<div class="command2">
-			<button class="sideButton" id="command2">save Progress</button>
+			<button class="sideButton" id="command2">Save Progress</button>
 		</div>
 		<div class="command3">
 			<button class="sideButton" id="command3">Validate</button>
@@ -605,7 +605,7 @@ vscode.commands.registerCommand('extension.saveExperiment', async () => {
 // });
 
 
-const ExecWorkflow = async (context: vscode.ExtensionContext) => {
+const MergeAndExec = async (context: vscode.ExtensionContext) => {
 
 	const panel = vscode.window.createWebviewPanel(
 		'virtualLabs',
@@ -628,7 +628,7 @@ const ExecWorkflow = async (context: vscode.ExtensionContext) => {
 					// repositoryName = "exp-dummy-experiment1-iiith";
 					repositoryName = message.repoName;
 					context.globalState.update('key', repositoryName);
-					vscode.window.showInformationMessage(`https://virtual-labs.github.io/${{ repositoryName }}/build`);
+					// vscode.window.showInformationMessage(`https://virtual-labs.github.io/${{ repositoryName }}/build`);
 					const repos : string = repositoryName as string;
 					// open remote repository from github using Remote repository vscode api extension 
 					panel.dispose();
@@ -638,12 +638,20 @@ const ExecWorkflow = async (context: vscode.ExtensionContext) => {
 						auth: pat,
 					});
 
+					await octokit.request('POST /repos/{owner}/{repo}/merges', {
+						owner: 'virtual-labs',
+						repo: repos,
+						base: 'testing',
+						head: 'dev',
+						commit_message: 'Merge dev and testing branches'
+					});
+
 					await octokit.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
 						owner: "virtual-labs",
 						repo: repos,
 						// repo: 'exp-dummy-experiment1-iiith',
-						workflow_id: 'scripts.yml',
-						ref: 'dev'
+						workflow_id: 'deployment-script.yml',
+						ref: 'testing'
 					});
 					break;
 				}
@@ -651,7 +659,6 @@ const ExecWorkflow = async (context: vscode.ExtensionContext) => {
 					break;
 				}
 			});
-	// console.log("ExecWorkflow");
 };
 
 // Register command to submit for review
@@ -701,7 +708,7 @@ function activate(context: vscode.ExtensionContext) {
 							break;
 						case 'command4': // View Current Experiment
 							// vscode.commands.executeCommand('extension.viewCurrentExperiment');
-							ExecWorkflow(context);
+							MergeAndExec(context);
 							break;
 						case 'command5': // Submit for Review
 							vscode.commands.executeCommand('extension.submitForReview');
