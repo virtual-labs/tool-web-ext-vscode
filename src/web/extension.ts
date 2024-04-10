@@ -421,10 +421,6 @@ function getPullInstructions() {
 				<input type="text" id="title" name="userName">
 
 			</div>
-			<div class="Experiment">
-				<label for="personalAccessToken">Personal Access Token</label>
-				<input type="text" id="personalAccessToken" name="personalAccessToken">
-			</div>
 			<div class="Branch">
 				<label for="commitMessage">Description</label>
 				<textarea id="description" name="commitMessage" ></textarea>
@@ -434,12 +430,10 @@ function getPullInstructions() {
 			const vscode = acquireVsCodeApi();
 			function pullRequest() {
 			const title = document.getElementById("title").value;
-			const personalAccessToken = document.getElementById("personalAccessToken").value;
 			const description = document.getElementById("description").value;
 			vscode.postMessage({
 				command: 'pr',
 				title: title,
-				personalAccessToken: personalAccessToken,
 				description: description
 			});
 			}
@@ -490,6 +484,21 @@ vscode.commands.registerCommand('extension.initializeExperiment', async (context
 				vscode.window.showErrorMessage(`Unknown command: ${message.command}`);
 		}
 	});
+});
+
+// Register command to save experiment
+vscode.commands.registerCommand('extension.saveExperiment', async () => {
+	const panel = vscode.window.createWebviewPanel(
+		'virtualLabs',
+		'Save Progress',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true
+		}
+	);
+	panel.webview.html = getPushInstructions();
+	vscode.window.showInformationMessage('Please enter your commit message and push your changes');
+	await vscode.commands.executeCommand('workbench.scm.focus');
 });
 
 // Register command for validation
@@ -553,21 +562,6 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 	}).catch(() => {
 		vscode.window.showErrorMessage('Validation failed');
 	});
-});
-
-// Register command to save experiment
-vscode.commands.registerCommand('extension.saveExperiment', async () => {
-	const panel = vscode.window.createWebviewPanel(
-		'virtualLabs',
-		'Save Progress',
-		vscode.ViewColumn.One,
-		{
-			enableScripts: true
-		}
-	);
-	panel.webview.html = getPushInstructions();
-	vscode.window.showInformationMessage('Please enter your commit message and push your changes');
-	await vscode.commands.executeCommand('workbench.scm.focus');
 });
 
 // Register command to view current experiment
@@ -714,17 +708,17 @@ function activate(context: vscode.ExtensionContext) {
 						case 'command1': // Initialize experiment
 							vscode.commands.executeCommand('extension.initializeExperiment', context);
 							break;
-						case 'command3': // Validate
-							vscode.commands.executeCommand('extension.validate', context);
-							break;
 						case 'command2': // Save Experiment
 							vscode.commands.executeCommand('extension.saveExperiment');
+							break;
+						case 'command3': // Validate
+							vscode.commands.executeCommand('extension.validate', context);
 							break;
 						case 'command4': // View Current Experiment
 							MergeAndExec(context);
 							break;
 						case 'command5': // Submit for Review
-							vscode.commands.executeCommand('extension.submitForReview');
+							vscode.commands.executeCommand('extension.submitForReview', context);
 							break;
 						case 'command6': // Help
 							vscode.commands.executeCommand('extension.help', extensionUri);
