@@ -636,7 +636,7 @@ const MergeAndExec = async (context: vscode.ExtensionContext) => {
 };
 
 // Register command to submit for review
-vscode.commands.registerCommand('extension.submitForReview', async () => {
+vscode.commands.registerCommand('extension.submitForReview', async (context: vscode.ExtensionContext) => {
 	const panel = vscode.window.createWebviewPanel(
 		'virtualLabs',
 		'Pull Request',
@@ -646,8 +646,48 @@ vscode.commands.registerCommand('extension.submitForReview', async () => {
 		}
 	);
 	panel.webview.html = getPullInstructions();
-	await vscode.commands.executeCommand('workbench.scm.focus');
-	await vscode.window.showInformationMessage('Please enter your pull request title and personal access token');
+	panel.webview.onDidReceiveMessage(async (message) => {
+		switch (message.command) {
+			case 'pr':
+				{
+					const title = message.title;
+					const description = message.description;
+					const workspaceFolders = vscode.workspace.workspaceFolders;
+					pat = context.globalState.get('accesstoken') as string;
+					if(!workspaceFolders){
+						vscode.window.showErrorMessage("No repository selected");
+						return;
+					}
+					const octokit = new Octokit({
+						auth: pat,
+					});
+					repositoryName = context.globalState.get('reponame') as string;
+					const repos: string = repositoryName;
+					await octokit.request('POST /repos/{owner}/{repo}/pulls', {
+						owner: 'virtual-labs',
+						repo: repos,
+						title: title,
+						body: description,
+						head: 'testing',
+						base: 'main',
+						headers: {
+							'X-GitHub-Api-Version': '2022-11-28'
+						}
+					}).then(response => {
+						if(response.status === 201){
+							vscode.window.showInformationMessage('Pull request submitted successfully');
+						}
+						else{
+							vscode.window.showErrorMessage("Failed to raise Pull request");
+						}
+					});
+					panel.dispose();
+					break;
+				}
+			default:
+				vscode.window.showErrorMessage(`Unknown command: ${message.command}`);
+		}
+	});
 });
 
 // Register command for help
