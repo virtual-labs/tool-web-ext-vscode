@@ -394,7 +394,7 @@ function getPushInstructions() {
 				<h4> Press push and commit.</h4>
 			</div>
 
-			<h3> <div class="instructions" style="color: red;">Warning: Please ensure you have write permissions to the repository or contact the owner or team at virtual labs via their email virtuallabs@gmail.com</div> </h3>
+			<h3> <div class="instructions" style="color: red;">Warning: Please ensure you have write permissions to the repository or contact the owner or team at virtual labs via their email dev-support@vlabs.ac.in.</div> </h3>
 		</body>
 		</html>`;
 }
