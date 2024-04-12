@@ -94,5 +94,8 @@
     "axios": "^1.6.8",
     "http-status-codes": "^2.3.0",
     "octokit": "^3.2.0"
-  }
+  },
+  "extensionDependencies": [
+    "ms-vscode.remote-repositories"
+  ]
 }
