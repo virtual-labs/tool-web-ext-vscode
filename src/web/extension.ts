@@ -251,10 +251,15 @@ function getPanel1Content() {
 			const command6 = document.getElementById('command6');
 
 		command1.addEventListener('click', () => {
-				vscode.postMessage({
-					command: 'command1'
-				});
+			vscode.postMessage({
+				command: 'command1'
 			});
+		});
+		command2.addEventListener('click', () => {
+			vscode.postMessage({
+				command: 'command2'
+			});
+		});
 		command3.addEventListener('click', async () => {
 			await vscode.postMessage({
 				command: 'command3'
@@ -263,11 +268,6 @@ function getPanel1Content() {
 			setTimeout(function() {
 				command3.disabled = false;
 			}, 20000);
-		});
-		command2.addEventListener('click', () => {
-			vscode.postMessage({
-				command: 'command2'
-			});
 		});
 		command4.addEventListener('click', () => {
 			vscode.postMessage({
@@ -590,7 +590,7 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 
 // Register command to view current experiment
 // const MergeAndExec = async (context: vscode.ExtensionContext) => {
-vscode.commands.executeCommand('extension.MergeAndExec', async (context: vscode.ExtensionContext) => {
+vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode.ExtensionContext) => {
 	pat = context.globalState.get('accesstoken') as string;
 	repositoryName = context.globalState.get('reponame');
 	const repos: string = repositoryName as string;
@@ -709,6 +709,7 @@ vscode.commands.registerCommand('extension.submitForReview', async (context: vsc
 					});
 					repositoryName = context.globalState.get('reponame') as string;
 					const repos: string = repositoryName;
+					vscode.window.showInformationMessage('Pull request Initiated');
 					await octokit.request('POST /repos/{owner}/{repo}/pulls', {
 						owner: 'virtual-labs',
 						repo: repos,
@@ -735,6 +736,8 @@ vscode.commands.registerCommand('extension.submitForReview', async (context: vsc
 						else{
 							vscode.window.showErrorMessage("Failed to raise Pull request");
 						}
+					}).catch(error => {
+						vscode.window.showErrorMessage('Sending pull request failed: ' + error.message);
 					});
 					panel.dispose();
 					break;
