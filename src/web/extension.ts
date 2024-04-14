@@ -214,8 +214,8 @@ function getPanel1Content() {
 				@keyframes spin {
 				0% { transform: rotate(0deg); }
 				100% { transform: rotate(360deg); }
-			  }
-			  
+			}
+
 			</style>
 			</head>
 		<body>
@@ -579,8 +579,8 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 			else {
 				vscode.window.showErrorMessage('Validation failed');
 			}
-		}).catch(() => {
-			vscode.window.showErrorMessage('Validation failed');
+		}).catch(error => {
+			vscode.window.showErrorMessage('Validation failed:', error.message);
 		});
 	}
 	else {
@@ -665,8 +665,8 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 				else {
 					vscode.window.showErrorMessage('build failed');
 				}
-			}).catch(() => {
-				vscode.window.showErrorMessage('build failed');
+			}).catch(error => {
+				vscode.window.showErrorMessage('build failed: ', error.message);
 			});
 		}
 		else if(response.status === 403) {
