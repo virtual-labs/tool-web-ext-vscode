@@ -1,11 +1,11 @@
 {
   "name": "VirtualLabs",
-  "displayName": "VirtualLabs",
-  "description": "A web extension for Virtual Labs",
+  "displayName": "Virtual-Labs-Online-Experiment-Authoring-Environment",
+  "description": "A web extension for Virtual Labs Experiment Authoring. Beta version.",
   "author": {
     "name": "Virtual-Labs"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.86.0"
   },
