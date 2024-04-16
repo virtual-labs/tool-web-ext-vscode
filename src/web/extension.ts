@@ -362,6 +362,7 @@ function getWebviewContent(context: vscode.ExtensionContext) {	// const config =
 		</html>`;
 }
 
+//Display for Save progress instructions
 function getPushInstructions() {
 	return `
 	<!DOCTYPE html>
@@ -380,18 +381,25 @@ function getPushInstructions() {
 		<body>
 			<h1>Instructions</h1>
 			<div class="push-dev_container">
-				<!-- <img src="image1.png" alt="Image 1"> -->
-				<h4> A panel should appear on the left-hand side similar to this one with the <span class="blue-background">   Commit & Push  </span>   button and a text box above this button.</h4>
-				<h4> It shows all the changes (additions, modifications, deletions) made to the files done by you.</h4> 
+				<h4> A panel should appear on the left-hand side with the <span class="blue-background">   Commit & Push  </span>   button and a text box above this button.</h4>
+				<h4> The panel shows all the changes (additions, modifications, deletions) made to the files done by you.</h4> 
 			</div>
 
 			<br>
 			<br>
 
 			<div class="push-dev_container">
-				<!-- <img src="image2.png" alt="Image 2"> -->
-				<h4> Add your commit message in the text box as shown. </h4>
-				<h4> Press push and commit.</h4>
+				<h4> Add your commit message in the text box. </h4>
+				<h4> Press the button Commit & Push.</h4>
+			</div>
+
+			<br>
+			<br>
+
+			<div class="push-dev_container">
+				<h4> If the changes have been pushed, or there are no changes made, the Commit & Push button appears faded </h4>
+				<h4> Additionally, the panel will be blank with no changes. </h4>
+				<h4> You can close the Save progress tab </h4>
 			</div>
 
 			<h3> <div class="instructions" style="color: red;">Warning: Please ensure you have write permissions to the repository or contact the owner or team at virtual labs via their email dev-support@vlabs.ac.in.</div> </h3>

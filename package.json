@@ -1,7 +1,7 @@
 {
   "name": "VirtualLabs",
-  "displayName": "VirtualLabs",
-  "description": "A web extension for Virtual Labs",
+  "displayName": "Virtual-Labs-Online-Experiment-Authoring-Environment",
+  "description": "A web extension for Virtual Labs Experiment Authoring. Beta version.",
   "author": {
     "name": "Virtual-Labs"
   },
