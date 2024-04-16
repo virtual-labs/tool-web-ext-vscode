@@ -5,12 +5,12 @@
   "author": {
     "name": "Virtual-Labs"
   },
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.86.0"
   },
   "publisher": "Virtual-Labs",
-  "repository": "https://github.com/virtual-labs/tool-web-ext-vscode",
+  "repository": "https://github.com/virtual-labs/tool-web-ext-vscode/",
   "categories": [
     "Other"
   ],
