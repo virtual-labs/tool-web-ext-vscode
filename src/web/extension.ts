@@ -758,7 +758,7 @@ vscode.commands.registerCommand('extension.submitForReview', async (context: vsc
 
 // Register command for help
 vscode.commands.registerCommand('extension.help', async (extensionUri: vscode.Uri) => {
-	const path = vscode.Uri.joinPath(extensionUri, 'src', 'README.md');
+	const path = vscode.Uri.joinPath(extensionUri, 'README.md');
 	vscode.commands.executeCommand('markdown.showPreview', path);
 });
 
