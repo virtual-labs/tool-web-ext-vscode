@@ -111,7 +111,7 @@ Alternatively, you can copy the link and paste it in a browser.
 
 ### Option 5- Submit for Review 
 
-![](./images/submit_for_review_menu.png)
+![Submit for Review](./images/submit_for_review_menu.png)
 
 Raises a pull request to the main branch of the experiment repository.
 - Pull Request title - Here you have to enter the title of your pull request.
