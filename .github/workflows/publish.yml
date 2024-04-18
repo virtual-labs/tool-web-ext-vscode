@@ -1,26 +1,27 @@
-name: Build, Lint, Test and Deploy
+name: Deploy Extension
 
 on:
   release:
     types:
       - published
+      - edited
 
-name: Deploy Extension
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: dev
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm ci
-      - name: Publish to Open VSX Registry
-        uses: HaaLeo/publish-vscode-extension@v1
-        with:
-          pat: ${{ secrets.OPEN_VSX_TOKEN }}
+      - name: Bump version
+        run: npm version patch --no-git-tag-version
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
+          baseImagesUrl: https://raw.githubusercontent.com/virtual-labs/tool-web-ext-vscode/dev
