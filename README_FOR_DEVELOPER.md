@@ -19,4 +19,10 @@ For testing in production environment in vscode.dev :
 - run production using `npm run start-vscode-server`
 - Now paste the localhost link in the vscode.dev at workspace option (developer: install) and install the extension.
 
+## Publishing
+
+1. Update the version in `package.json`.
+2. Run `npm run package` to create a `.vsix` file.
+3. Upload this .vsix file to the marketplace.
+
 **Note**: The compilation should be done before running the extension. If you encounter any error, make sure that you have compiled the code first.
