@@ -72,7 +72,8 @@
     "watch-web": "webpack --watch",
     "package-web": "webpack --mode production --devtool hidden-source-map",
     "lint": "eslint src --ext ts",
-    "publish": "vsce package --baseImagesUrl https://github.com/virtual-labs/tool-web-ext-vscode/raw/dev"
+    "package-it": "vsce package --baseImagesUrl https://github.com/virtual-labs/tool-web-ext-vscode/raw/dev",
+    "publish-it": "vsce publish"
   },
   "devDependencies": {
     "@types/assert": "^1.5.10",
