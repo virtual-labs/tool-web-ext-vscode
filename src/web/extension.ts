@@ -446,10 +446,8 @@ function getPullInstructions() {
 			}
 			const submitButton = document.getElementById('pr');
 			submitButton.addEventListener('click', pullRequest);
-			
 			</script>
 			</body>
-			
 			</html>`;
 }
 
