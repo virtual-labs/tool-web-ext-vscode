@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
-// import axios from 'axios';
 import { Octokit } from 'octokit';
 
 // common css
@@ -290,7 +289,7 @@ function getPanel1Content() {
 		`;
 }
 
-function getWebviewContent(context: vscode.ExtensionContext) {	// const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
+function getWebviewContent(context: vscode.ExtensionContext) {	
 	// const branches = config.branches;
 	// const organizations = config.organizations;
 	// const branchOptions = branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
@@ -540,11 +539,7 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 						await octokit.request('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
 							owner: 'virtual-labs',
 							repo: repos,
-							// repo: 'exp-dummy-experiment1-iiith',
 							workflow_id: 'validate.yml',
-							headers: {
-								'X-GitHub-Api-Version': '2022-11-28'
-							}
 						}).then(async (response) => {
 							if(response.status === 200 || response.status === 201){
 								const runstatus = response.data.workflow_runs[0].status;
@@ -597,7 +592,6 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 });
 
 // Register command to view current experiment
-// const MergeAndExec = async (context: vscode.ExtensionContext) => {
 vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode.ExtensionContext) => {
 	pat = context.globalState.get('accesstoken') as string;
 	repositoryName = context.globalState.get('reponame');
@@ -631,9 +625,6 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 								owner: 'virtual-labs',
 								repo: repos,
 								workflow_id: 'deployment-script.yml',
-								headers: {
-									'X-GitHub-Api-Version': '2022-11-28'
-								}
 							}).then(async (response) => {
 								if(response.status === 200 || response.status === 201){
 									const runstatus = response.data.workflow_runs[0].status;

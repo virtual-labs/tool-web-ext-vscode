@@ -14,9 +14,6 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "VirtualLabs.helloWorld"
-  ],
   "browser": "./dist/web/extension.js",
   "icon": "images/logo.png",
   "contributes": {
@@ -40,13 +37,32 @@
     },
     "commands": [
       {
-        "icon": "images/icon.svg",
-        "command": "VirtualLabs.helloWorld",
-        "title": "Hello World"
+        "command": "VirtualLabs.initializeExperiment",
+        "title": "Clone an experiment"
       },
       {
-        "command": "extension.pushWithCustomMessage",
-        "title": "Push with Custom Message"
+        "command": "VirtualLabs.saveExperiment",
+        "title": "Save experiment progress"
+      },
+      {
+        "command": "VirtualLabs.validate",
+        "title": "Lints the code"
+      },
+      {
+        "command": "VirtualLabs.saveExperiment",
+        "title": "Save experiment progress"
+      },
+      {
+        "command": "VirtualLabs.MergeAndExec",
+        "title": "Merge and Execute"
+      },
+      {
+        "command": "VirtualLabs.submitForReview",
+        "title": "Send pull request"
+      },
+      {
+        "command": "VirtualLabs.help",
+        "title": "Help page"
       }
     ],
     "extends": [
@@ -66,7 +82,7 @@
     "pretest": "npm run compile-web",
     "dev": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ",
     "generate-certificate": "mkdir -p $HOME/certs && cd $HOME/certs && mkcert -install && mkcert localhost",
-    "start-vscode-server": "npx serve --cors -l 5000 --ssl-cert $HOME/certs/localhost.pem --ssl-key $HOME/certs/localhost-key.pem",
+    "dev-in-vscode-web": "npx serve --cors -l 5000 --ssl-cert $HOME/certs/localhost.pem --ssl-key $HOME/certs/localhost-key.pem",
     "vscode:prepublish": "npm run package-web",
     "compile-web": "webpack",
     "watch-web": "webpack --watch",
@@ -94,8 +110,6 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "axios": "^1.6.8",
-    "http-status-codes": "^2.3.0",
     "octokit": "^3.2.0"
   },
   "extensionDependencies": [

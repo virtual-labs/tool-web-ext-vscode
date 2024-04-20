@@ -16,7 +16,7 @@ For testing in production environment in vscode.dev :
 
 - ensure the availability of mkcert (if not installed : `brew install mkcert` or `choco install mkcert` or `apt-get install mkcert`)
 - Then run `npm run generate-certificate` to generate the certificate for localhost (needed for only first time of testing).
-- run production using `npm run start-vscode-server`
+- run production using `npm run dev-in-vscode-web`
 - Now paste the localhost link in the vscode.dev at workspace option (developer: install) and install the extension.
 
 ## Publishing
