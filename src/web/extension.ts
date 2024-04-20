@@ -716,9 +716,6 @@ vscode.commands.registerCommand('extension.submitForReview', async (context: vsc
 						body: description,
 						head: 'testing',
 						base: 'main',
-						headers: {
-							'X-GitHub-Api-Version': '2022-11-28'
-						}
 					}).then(response => {
 						if(response.status === 201){
 							vscode.window.showInformationMessage('Pull request submitted successfully');
