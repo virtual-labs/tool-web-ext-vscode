@@ -2,6 +2,8 @@
 
 All notable changes to the "VirtualLabs" extension will be documented in this file.
 
-## [Unreleased]
+## [Released]
 
-- Started project with blank web extension with TypeScript and Webpack having hello world command
+## [0.0.1] - 2024-03-15
+
+Initial release of Virtual Labs, a VS Code extension that allows users to create, manage, and deploy virtual labs.
