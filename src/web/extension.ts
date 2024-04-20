@@ -10,7 +10,7 @@ const commonCss = `h1 {
 .Organization {
 	margin: auto;
 	width: 60%;
-	border: 3px solid #73AD21;
+	border: 3px solid #03b1fc;
 	padding: 10px;
 	font-weight: bold;
 	margin-bottom: 1px;
@@ -19,7 +19,7 @@ const commonCss = `h1 {
 .Experiment {
 	margin: auto;
 	width: 60%;
-	border: 3px solid #73AD21;
+	border: 3px solid #03b1fc;
 	padding: 10px;
 	font-weight: bold;
 	margin-bottom: 1px;
@@ -29,7 +29,7 @@ const commonCss = `h1 {
 .Branch {
 	margin: auto;
 	width: 60%;
-	border: 3px solid #73AD21;
+	border: 3px solid #03b1fc;
 	padding: 10px;
 	font-weight: bold;
 }
@@ -37,7 +37,7 @@ const commonCss = `h1 {
 .token{
 		margin: auto;
 		width: 60%;
-		border: 3px solid #73AD21;
+		border: 3px solid #03b1fc;
 		padding: 10px;
 		font-weight: bold;
 }
@@ -159,7 +159,8 @@ img {
     justify-content: initial; 
     align-items: initial;
     text-align: initial;
-	border: 2px solid green; /* First set of instructions with green border */
+	border: 5px solid #03b1fc; /* First set of instructions with green border */
+	padding: 10px;
 }
 
 .push-dev_container:last-child {
@@ -289,7 +290,7 @@ function getPanel1Content() {
 		`;
 }
 
-function getWebviewContent(context: vscode.ExtensionContext) {	
+function getWebviewContent(context: vscode.ExtensionContext) {
 	// const branches = config.branches;
 	// const organizations = config.organizations;
 	// const branchOptions = branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
@@ -380,25 +381,24 @@ function getPushInstructions() {
 		<body>
 			<h1>Instructions</h1>
 			<div class="push-dev_container">
-				<h4> A panel should appear on the left-hand side with the <span class="blue-background">   Commit & Push  </span>   button and a text box above this button.</h4>
+				<h4> A panel should appear on the left-hand side with the <span class="blue-background">Commit & Push</span> button and a text box above this button.</h4>
 				<h4> The panel shows all the changes (additions, modifications, deletions) made to the files done by you.</h4> 
 			</div>
-
 			<br>
-			<br>
-
 			<div class="push-dev_container">
 				<h4> Add your commit message in the text box. </h4>
-				<h4> Press the button Commit & Push.</h4>
+				<h4> Press the Commit & Push button</h4>
 			</div>
-
 			<br>
-			<br>
-
 			<div class="push-dev_container">
 				<h4> If the changes have been pushed, or there are no changes made, the Commit & Push button appears faded </h4>
 				<h4> Additionally, the panel will be blank with no changes. </h4>
 				<h4> You can close the Save progress tab </h4>
+			</div>
+			<br>
+			<div class="push-dev_container">
+				<h4> In the event that the button on the panel says <span class="blue-background">Open Remote Repository</span> , you are yet to initialize the experiment. </h4>
+				<h4> Click on the Initialize Experiment button to start </h4>
 			</div>
 
 			<h3> <div class="instructions" style="color: red;">Warning: Please ensure you have write permissions to the repository or contact the owner or team at virtual labs via their email dev-support@vlabs.ac.in.</div> </h3>
@@ -452,7 +452,7 @@ function getPullInstructions() {
 }
 
 let repositoryName: string | undefined = "";
-let pat : string | undefined = "";
+let pat: string | undefined = "";
 
 // Register command to initialize experiment
 vscode.commands.registerCommand('extension.initializeExperiment', async (context: vscode.ExtensionContext) => {
@@ -539,7 +539,7 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 							repo: repos,
 							workflow_id: 'validate.yml',
 						}).then(async (response) => {
-							if(response.status === 200 || response.status === 201){
+							if (response.status === 200 || response.status === 201) {
 								const runstatus = response.data.workflow_runs[0].status;
 								if (runstatus === 'completed') {
 									vscode.window.showInformationMessage('Validation completed successfully');
@@ -557,11 +557,11 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 									vscode.window.showInformationMessage('Validation in progress');
 								}
 							}
-							else if(response.status === 403) {
+							else if (response.status === 403) {
 								vscode.window.showErrorMessage('Validation failed due to exceeded rate limit. Please try changing your internet or come again after some time.');
 								clearInterval(running_status);
 							}
-							else if(response.status === 404) {
+							else if (response.status === 404) {
 								vscode.window.showErrorMessage('Validation failed due to invalid repository. It is wrongly configured');
 								clearInterval(running_status);
 							}
@@ -571,10 +571,10 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 					}
 				}, 10000);
 			}
-			else if(response.status === 403) {
+			else if (response.status === 403) {
 				vscode.window.showErrorMessage('Validation failed due to exceeded rate limit. Please try changing your internet or come again after some time.');
 			}
-			else if(response.status === 404) {
+			else if (response.status === 404) {
 				vscode.window.showErrorMessage('Validation failed due to invalid repository. It is wrongly configured');
 			}
 			else {
@@ -624,7 +624,7 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 								repo: repos,
 								workflow_id: 'deployment-script.yml',
 							}).then(async (response) => {
-								if(response.status === 200 || response.status === 201){
+								if (response.status === 200 || response.status === 201) {
 									const runstatus = response.data.workflow_runs[0].status;
 									if (runstatus === 'completed') {
 										vscode.window.showInformationMessage('build completed successfully');
@@ -639,11 +639,11 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 										vscode.window.showInformationMessage('Build in progress');
 									}
 								}
-								else if(response.status === 403) {
+								else if (response.status === 403) {
 									vscode.window.showErrorMessage('build failed due to exceeded rate limit. Please try changing your internet or come again after some time.');
 									clearInterval(running_status);
 								}
-								else if(response.status === 404) {
+								else if (response.status === 404) {
 									vscode.window.showErrorMessage('build failed due to invalid repository. It is wrongly configured');
 									clearInterval(running_status);
 								}
@@ -653,10 +653,10 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 						}
 					}, 10000);
 				}
-				else if(response.status === 403) {
+				else if (response.status === 403) {
 					vscode.window.showErrorMessage('build failed due to exceeded rate limit. Please try changing your internet or come again after some time.');
 				}
-				else if(response.status === 404) {
+				else if (response.status === 404) {
 					vscode.window.showErrorMessage('build failed due to invalid repository. It is wrongly configured');
 				}
 				else {
@@ -666,10 +666,10 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 				vscode.window.showErrorMessage('build failed: ', error.message);
 			});
 		}
-		else if(response.status === 403) {
+		else if (response.status === 403) {
 			vscode.window.showErrorMessage('Merge failed due to exceeded rate limit. Please try changing your internet or come again after some time.');
 		}
-		else if(response.status === 404) {
+		else if (response.status === 404) {
 			vscode.window.showErrorMessage('Merge failed due to invalid repository. It is wrongly configured');
 		}
 		else {
@@ -697,7 +697,7 @@ vscode.commands.registerCommand('extension.submitForReview', async (context: vsc
 					const description = message.description;
 					const workspaceFolders = vscode.workspace.workspaceFolders;
 					pat = context.globalState.get('accesstoken') as string;
-					if(!workspaceFolders){
+					if (!workspaceFolders) {
 						vscode.window.showErrorMessage("No repository selected");
 						return;
 					}
@@ -715,19 +715,19 @@ vscode.commands.registerCommand('extension.submitForReview', async (context: vsc
 						head: 'testing',
 						base: 'main',
 					}).then(response => {
-						if(response.status === 201){
+						if (response.status === 201) {
 							vscode.window.showInformationMessage('Pull request submitted successfully');
 						}
-						else if(response.status === 422){
+						else if (response.status === 422) {
 							vscode.window.showErrorMessage('Pull request already exists');
 						}
-						else if(response.status === 403){
+						else if (response.status === 403) {
 							vscode.window.showErrorMessage('Pull request failed due to exceeded rate limit. Please try changing your internet or come again after some time.');
 						}
-						else if(response.status === 404){
+						else if (response.status === 404) {
 							vscode.window.showErrorMessage('Pull request failed due to invalid repository.');
 						}
-						else{
+						else {
 							vscode.window.showErrorMessage("Failed to raise Pull request");
 						}
 					}).catch(error => {
@@ -774,7 +774,7 @@ function activate(context: vscode.ExtensionContext) {
 							break;
 						case 'command4': // View Current Experiment
 							vscode.commands.executeCommand('extension.MergeAndExec', context);
-						break;
+							break;
 						case 'command5': // Submit for Review
 							vscode.commands.executeCommand('extension.submitForReview', context);
 							break;
