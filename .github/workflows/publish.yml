@@ -26,7 +26,7 @@ jobs:
           git config --local user.name "GitHub Actions"
           git add package.json package-lock.json
           git commit -m "Bump version to $(node -p "require('./package.json').version")"
-          git push
+          git push origin dev
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1
         with:
