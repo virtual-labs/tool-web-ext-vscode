@@ -8,11 +8,11 @@ Click [here](#developer-support) for developer support.
 ## Prerequisities
 To make use of the extension, the following is required:
 
-- Github account 
+- Github account  
 - Stable, high-speed internet connection
 
 ## Getting started- setup
-1. Install the extension on vscode.dev from the Visual Studio Code Marketplace by searching for "Virtual Labs Experiment Authoring Environment".
+1. Install the extension on vscode.dev from the Visual Studio Code Marketplace by searching for "Virtual Labs".
 
 2. Click on the extension icon in the left panel
 
@@ -23,6 +23,8 @@ To make use of the extension, the following is required:
     - [View Current Experiment](#option-4-view-experiment)
     - [Submit for Review](#option-5--submit-for-review)
     - [Help](#option-6---help)
+    - [Show Previous Validation Logs](#show-previous-validation-logs)
+    - [Show Previous Build Logs](#show-previous-build-logs)
 
 ![icon and options reference image](./images/web_ext_menu.png)
 
@@ -87,11 +89,9 @@ The status of validate is continously updated in dialogue boxes in the bottom le
 
 ![dialogue_validation_img](./images/validation_in_progress_dialogue.png)
 
-If validation process completes successfully, you will be directed to an Open file option towards the top.  
+If validation process completes successfully, the logs will be displayed in a panel called validation logs.  
 
 ![dialogue_validation_img](./images/validation_lint_popup.png)
-
-Here, you can click on lint.txt to see the error logs.
 
 ### Option 4: View Current Experiment
 
@@ -101,7 +101,9 @@ This option provides you a link to view the experiment, including any changes yo
 
 Like [Validate](#option-3-validate), this too informs you of current status of experiment as the experiment is built before you can view it.
 
-A pop-up will ask you if you want to open an external website.
+Once the build is complete and successful, the logs will be displayed in a panel called build logs.     
+
+And also pop-up will ask you if you want to open an external website in new tab.
 
 ![popup_for-build](./images/build-exp-link-popup.png)
 
@@ -119,6 +121,12 @@ Raises a pull request to the main branch of the experiment repository.
 
 ### Option 6 - Help
 Explains how to to operate and use the extension. 
+
+### Show Previous Validation Logs
+This option allows you to view the logs of the previous validation process. If there were errors or warnings during that session they will be displayed here.
+
+### Show Previous Build Logs
+This option allows you to view the logs of the previous build process. If there were errors or warnings during that session they will be displayed here.
 
 ## Developer Support
 If you face any difficulty in using this extension or find any bug then you can perform the following steps

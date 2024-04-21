@@ -19,6 +19,7 @@ The key features of Virtual Labs Content Development Platform include:
 - Save progress: This directs users to save any changes made, before they can choose to view it or validate it. 
 - Validate: This validates the experiment as its in the dev branch. It also allows the error logs to be displayed- if the user would like to they could view these to gain more information. 
 - Real-Time Deployment: The extension ensures that any changes made to experiments saved using 'Save progress' are deployed in real-time to GitHub Pages. Experiment creators can instantly see the updated version of their experiments and observe how the changes impact the overall experience.
+- Saving Previous Instance: The extension saves the previous instances of the logs to provide user a choice to access the logs again incase they closed them.
 
 ## DOCS
 
@@ -26,6 +27,7 @@ The key features of Virtual Labs Content Development Platform include:
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | [User document](./docs/USER_README.md)          | A comprehensive documentation for users of Virtual Labs Online Experiment Authoring Environment                                       |
 | [Developer document](./docs/DEVELOPER_README.md) | A comprehensive development documentation for developers working on the Virtual Labs Online Experiment Authoring Environment. |
+| [Client document](./docs/CLIENT_README.md)      | A comprehensive documentation for clients of Virtual Labs Online Experiment Authoring Environment.                                    |
 
 
 ## Developer Support

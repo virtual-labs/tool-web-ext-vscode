@@ -21,8 +21,6 @@ For testing in production environment in vscode.dev :
 
 ## Publishing
 
-1. Update the version in `package.json`.
-2. Run `npm run package` to create a `.vsix` file.
-3. Upload this .vsix file to the marketplace.
+The publishing of the extension is done by the CI/CD pipeline. The pipeline is triggered when a new release is pushed to the repository. The pipeline will compile the extension and publish it to the marketplace.
 
 **Note**: The compilation should be done before running the extension. If you encounter any error, make sure that you have compiled the code first.
