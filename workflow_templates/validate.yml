@@ -20,4 +20,4 @@ jobs:
           echo 'Linting code...'
           npm i @virtual-labs/buildexp@latest
           npx @virtual-labs/buildexp validate
-	        echo 'Linting Completed..'
+          echo 'Linting Completed..'
