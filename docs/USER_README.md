@@ -26,7 +26,7 @@ To make use of the extension, the following is required:
     - [Show Previous Validation Logs](#show-previous-validation-logs)
     - [Show Previous Build Logs](#show-previous-build-logs)
 
-![icon and options reference image](./images/web_ext_menu.png)
+![icon and options reference image](../images/web_ext_menu.png)
 
 Note: For using some of these options, you may be asked to log in to GitHub if not already done so. 
 
@@ -40,7 +40,7 @@ You may either be asked via a pop-up window or you can see a blue notification a
 
     This may redirect you to another tab or open a window for you to sign in.
 
-    ![Github login window shown here](./images/github_login_popup_window.png)
+    ![Github login window shown here](../images/github_login_popup_window.png)
 
 2.  You must input your credentials accordingly 
 
@@ -58,7 +58,7 @@ You may either be asked via a pop-up window or you can see a blue notification a
 
 ### Option 1: Initialize Experiment
 
-![initialise_menu_image](./images/opt1_initialize_menu.png)
+![initialise_menu_image](../images/opt1_initialize_menu.png)
 
 #### This step must be done first to start working on the extension
 
@@ -87,11 +87,11 @@ This option validates the code with eslint and also validates the experiment des
 
 The status of validate is continously updated in dialogue boxes in the bottom left, for example, 'Validation in progress'
 
-![dialogue_validation_img](./images/validation_in_progress_dialogue.png)
+![dialogue_validation_img](../images/validation_in_progress_dialogue.png)
 
 If validation process completes successfully, the logs will be displayed in a panel called validation logs.  
 
-![dialogue_validation_img](./images/validation_lint_popup.png)
+![dialogue_validation_img](../images/validation_lint_popup.png)
 
 ### Option 4: View Current Experiment
 
@@ -105,7 +105,7 @@ Once the build is complete and successful, the logs will be displayed in a panel
 
 And also pop-up will ask you if you want to open an external website in new tab.
 
-![popup_for-build](./images/build-exp-link-popup.png)
+![popup_for-build](../images/build-exp-link-popup.png)
 
 Click 'OPEN' to view the current experiment in a new window tab. 
 
@@ -113,7 +113,7 @@ Alternatively, you can copy the link and paste it in a browser.
 
 ### Option 5- Submit for Review 
 
-![Submit for Review](./images/submit_for_review_menu.png)
+![Submit for Review](../images/submit_for_review_menu.png)
 
 Raises a pull request to the main branch of the experiment repository.
 - Pull Request title - Here you have to enter the title of your pull request.

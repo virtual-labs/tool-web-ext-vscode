@@ -3,17 +3,31 @@
 This document serves as a guide for developers working on the Virtual Labs Content Development Platform project. It provides an overview of the project, development guidelines, design choices and deployment instructions. 
 
 ## Table of contents
-- [Introduction](#introduction)
-- [Environment](#environment)
-- [Development Instructions](#developer-instructions)
-    - [Compiling the extension](#how-to-run-and-compile)
-    - [Testing the extension](#how-to-test)
-- [Functionalities](#functionalities)
-- [Technologies used](#technologies-or-libraries-used)
-    - [Github Workflows](#github-workflows)
-    - [Github API](#github-api)
-    - [Associated extension](#associated-extensions)
-- [Rejected or unused technologies](#technologies-rejected-or-unable-to-implement)
+- [Virtual Labs Online Experiment Authoring Environment- Developer Documentation](#virtual-labs-online-experiment-authoring-environment--developer-documentation)
+  - [Table of contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Environment](#environment)
+  - [Developer Instructions](#developer-instructions)
+    - [How to Run and Compile](#how-to-run-and-compile)
+    - [How to test](#how-to-test)
+      - [For testing in local environment:](#for-testing-in-local-environment)
+      - [For testing in production environment in vscode.dev :](#for-testing-in-production-environment-in-vscodedev-)
+  - [Functionalities](#functionalities)
+    - [Initialize Experiment](#initialize-experiment)
+    - [Validate](#validate)
+    - [View Current Experiment](#view-current-experiment)
+    - [Save Progress](#save-progress)
+    - [Help](#help)
+    - [Submit for Review](#submit-for-review)
+  - [Technologies or libraries used](#technologies-or-libraries-used)
+    - [Github Worflows](#github-worflows)
+    - [Octokit](#octokit)
+    - [Remote Repositories](#remote-repositories)
+  - [Technologies rejected or unable to implement](#technologies-rejected-or-unable-to-implement)
+    - [Direct use of node modules](#direct-use-of-node-modules)
+    - [GitHub Codespaces](#github-codespaces)
+    - [Isomorphic git](#isomorphic-git)
+    - [File system](#file-system)
 
 
 ## Introduction 
@@ -91,12 +105,10 @@ This extension makes use of a workflow to carry out the following functionality:
     - summary of action/jobs: 
         -  fetches code from the experiment repository
         - runs a series of commands to run the virtual-labs buildexp package i.e virtual-labs/buildexp validate; this lints the code
-        - outputs this to a text file lint.txt which is pushed to dev
 - View Current Experiment
     - workflow name: deployment-script.yml
     - Trigger: workflow disptach
     - Triggered via octokit on click of button
-    
 For further details, clink on this [link](https://docs.github.com/en/actions/using-workflows)
 
 
