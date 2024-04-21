@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as vscode from 'vscode';
 import { Octokit } from 'octokit';
-
+import JSZip from 'jszip';
 // common css
 const commonCss = `h1 {
 	text-align: center;
@@ -186,40 +186,42 @@ function getPanel1Content() {
 			<title>Virtual Labs Experiment Authoring Environment</title>
 			<style>
 			.sideButton{
+				display: flex;
 				background-color: #03b1fc;
 				margin: 5px;
+				padding: 5px;
 				text-align: center;
 				width: 70%;
 				height: 100%;
-				font-size: 1em;
+				font-size: 1.1em;
 				color: black;
 				cursor: pointer;
-				border-radius: 8px;
+				border: none;
+				border-radius: 6px;
+				justify-content: center;
 				align-items: center;
-				margin-left: 15%;
+				justify-self: center;
+				margin-left: auto;
+				margin-right: auto;
 			}
-			.loader {
-				border: 16px solid #f3f3f3;
-				border-top: 16px solid #3498db;
-				border-radius: 50%;
-				width: 50px;
-				height: 50px;
-				animation: spin 2s linear infinite;
-				display: none;
+			.sideButton:hover{
+				background-color: #03a1e1;
+			}
+
+			.down{
 				position: absolute;
-				top: 40%;
-				left: 30%;
-				transform: translate(-50%, -50%);
-				}
-				@keyframes spin {
-				0% { transform: rotate(0deg); }
-				100% { transform: rotate(360deg); }
+				bottom: 4%;
+				width: 90%;
+				margin-left: 3%;
+				overflow: hidden;
+			}
+			.down .sideButton{
+				width: 70%;
 			}
 
 			</style>
 			</head>
 		<body>
-		<div class="loader" id="loader"></div>
 		<div class="command1">
 		<button class="sideButton" id="command1">Initialize Experiment</button>
 		</div>
@@ -238,6 +240,15 @@ function getPanel1Content() {
 		<div class="command6">
 			<button class="sideButton" id="command6">Help</button>
 		</div>
+
+		<div class="down">
+		<div class="command7">
+			<button class="sideButton" id="command7">Show Previous Validation Logs</button>
+		</div>
+		<div class="command8">
+			<button class="sideButton" id="command8">Show Previous Build Logs</button>
+		</div>
+		</div>
 		</body>
 		<script>
 		const vscode = acquireVsCodeApi();
@@ -249,6 +260,8 @@ function getPanel1Content() {
 			const command4 = document.getElementById('command4');
 			const command5 = document.getElementById('command5');
 			const command6 = document.getElementById('command6');
+			const command7 = document.getElementById('command7');
+			const command8 = document.getElementById('command8');
 
 		command1.addEventListener('click', () => {
 			vscode.postMessage({
@@ -267,12 +280,16 @@ function getPanel1Content() {
 			command3.disabled = true;
 			setTimeout(function() {
 				command3.disabled = false;
-			}, 20000);
+			}, 30000);
 		});
 		command4.addEventListener('click', () => {
 			vscode.postMessage({
 				command: 'command4'
 			});
+			command4.disabled = true;
+			setTimeout(function() {
+				command4.disabled = false;
+			}, 30000);
 		});
 		command5.addEventListener('click', () => {
 			vscode.postMessage({
@@ -282,6 +299,16 @@ function getPanel1Content() {
 		command6.addEventListener('click', () => {
 			vscode.postMessage({
 				command: 'command6'
+			});
+		});
+		command7.addEventListener('click', () => {
+			vscode.postMessage({
+				command: 'command7'
+			});
+		});
+		command8.addEventListener('click', () => {
+			vscode.postMessage({
+				command: 'command8'
 			});
 		});
 		});
@@ -323,7 +350,7 @@ function getWebviewContent(context: vscode.ExtensionContext) {
 			</div>
 			<div class="Experiment">
 				<label for="experimentName">Experiment Repository Name</label>
-				<input type="text" id="experimentName" name="experimentName">
+				<input type="text" id="experimentName" name="experimentName" value="${context.globalState.get('reponame') === undefined ? "" : context.globalState.get('reponame')}">
 			</div>
 			<div class="Branch">
 				<label for="branch">Branch</label>
@@ -451,6 +478,56 @@ function getPullInstructions() {
 			</html>`;
 }
 
+function getLintResult(lint_content: string){
+	return `
+	<!DOCTYPE html>
+		<html lang="en">
+
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
+			<title>Virtual Labs Experiment Authoring Environment</title>
+			<style>
+			`+ commonCss + `
+		</style>
+		</head>
+
+		<body>
+			<h1>Validation Results</h1>
+			<div class="push-dev_container" style="font-size: 14px;line-height: 20px;">
+			`+ lint_content +`
+			</div>
+			<br>
+		</body>
+		</html>`;
+}
+
+function getBuildLog(build_content: string){
+	return `
+	<!DOCTYPE html>
+		<html lang="en">
+
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval';">
+			<title>Virtual Labs Experiment Authoring Environment</title>
+			<style>
+			`+ commonCss + `
+		</style>
+		</head>
+
+		<body>
+			<h1>Build Logs</h1>
+			<div class="push-dev_container" style="font-size: 14px;line-height: 20px;">
+			`+ build_content +`
+			</div>
+			<br>
+		</body>
+		</html>`;
+}
+
 let repositoryName: string | undefined = "";
 let pat: string | undefined = "";
 
@@ -511,6 +588,24 @@ vscode.commands.registerCommand('extension.saveExperiment', async () => {
 	await vscode.commands.executeCommand('workbench.scm.focus');
 });
 
+// Function to extract specific file from ZIP
+async function extractFileFromZip(blob: Blob, type: string) {
+	try {
+	// Load the ZIP file
+	const lintCodeBaseFile = await JSZip.loadAsync(blob);
+	if(type === 'build'){
+		const fileContent = await lintCodeBaseFile.file("build/4_Run git clone --depth=1 httpsgithub.comvirtual-labsph3-lab.txt")?.async("string");
+		return fileContent;
+	}else{
+		const fileContent = await lintCodeBaseFile.file("Lint Code Base/3_Running Lint Command.txt")?.async("string");
+		return fileContent;
+	}
+	// Extract the contents of the ZIP file
+	} catch (error) {
+	console.error("Error extracting file from ZIP:", error);
+	}
+  }
+
 // Register command for validation
 vscode.commands.registerCommand('extension.validate', async (context: vscode.ExtensionContext) => {
 	vscode.window.showInformationMessage('Validating the experiment');
@@ -520,6 +615,10 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 	repositoryName = context.globalState.get('reponame');
 	const repos: string = repositoryName as string;
 	const workspaceFolders = vscode.workspace.workspaceFolders;
+	if(pat === undefined || repos === undefined){
+		vscode.window.showErrorMessage("Please initialize the experiment first");
+		return;
+	}
 	const octokit = new Octokit({
 		auth: pat,
 	});
@@ -543,11 +642,35 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 								const runstatus = response.data.workflow_runs[0].status;
 								if (runstatus === 'completed') {
 									vscode.window.showInformationMessage('Validation completed successfully');
-									await vscode.commands.executeCommand('remoteHub.pull');
-									vscode.window.showInformationMessage('Select lint.txt from the list to see validation results.');
-									// vscode.window.showTextDocument(vscode.Uri.file(`${workspaceFolders[0].uri.path}/lint.txt`));
-									await vscode.commands.executeCommand('workbench.action.files.openFile', vscode.Uri.file(`${workspaceFolders[0].uri.path}/lint.txt`));
-									clearInterval(running_status);
+									const actoken = context.globalState.get('accesstoken');
+									pat = actoken as string; // access token is stored in global state when user
+									repositoryName = context.globalState.get('reponame');
+									const repos: string = repositoryName as string;
+									if (workspaceFolders && workspaceFolders.length > 0) {
+										const run_id = response.data.workflow_runs[0].id;
+										await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{workflow_id}/logs', {
+											owner: "virtual-labs",
+											repo: repos,
+											workflow_id: run_id,
+										}).then(async (response) => {
+											const pattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z/g;
+											const lint_content = await extractFileFromZip(response.data, "lint") as string;
+											const formattedContent = lint_content.replace(/\n/g, "<br>").replace(pattern, "").replace('[36;1m', '<span style="color: blue; font-weight: bold;">').replace('[32m', '<span style="color: green;">').replace('[31m', '<span style="color: red;">').replace('[0m', '</span>');
+											const panel = vscode.window.createWebviewPanel(
+												'virtualLabs',
+												'Validation Results',
+												vscode.ViewColumn.One,
+												{
+													enableScripts: true
+												}
+												);
+												panel.webview.html = getLintResult(formattedContent);
+												context.globalState.update('prevlint', formattedContent);
+											}).catch(error => {
+												vscode.window.showErrorMessage('Validation failed:', error.message);
+											});
+											clearInterval(running_status);
+									}
 								}
 								else if (runstatus === 'Failed') {
 									vscode.window.showErrorMessage('Validation failed');
@@ -565,6 +688,8 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 								vscode.window.showErrorMessage('Validation failed due to invalid repository. It is wrongly configured');
 								clearInterval(running_status);
 							}
+						}).catch(error => {
+							vscode.window.showErrorMessage('Validation failed:', error.message);
 						});
 					} else {
 						vscode.window.showErrorMessage("No workspace folder found.");
@@ -578,7 +703,7 @@ vscode.commands.registerCommand('extension.validate', async (context: vscode.Ext
 				vscode.window.showErrorMessage('Validation failed due to invalid repository. It is wrongly configured');
 			}
 			else {
-				vscode.window.showErrorMessage('Validation failed');
+				vscode.window.showErrorMessage('Validation failed with code', response.status);
 			}
 		}).catch(error => {
 			vscode.window.showErrorMessage('Validation failed:', error.message);
@@ -595,11 +720,13 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 	repositoryName = context.globalState.get('reponame');
 	const repos: string = repositoryName as string;
 	const workspaceFolders = vscode.workspace.workspaceFolders;
-
+	if(pat === undefined || repos === undefined){
+		vscode.window.showErrorMessage("Please initialize the experiment first");
+		return;
+	}
 	const octokit = new Octokit({
 		auth: pat,
 	});
-
 	await octokit.request('POST /repos/{owner}/{repo}/merges', {
 		owner: 'virtual-labs',
 		repo: repos,
@@ -627,8 +754,36 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 								if (response.status === 200 || response.status === 201) {
 									const runstatus = response.data.workflow_runs[0].status;
 									if (runstatus === 'completed') {
-										vscode.window.showInformationMessage('build completed successfully');
-										vscode.env.openExternal(vscode.Uri.parse(`https://virtual-labs.github.io/${repos}`));
+										const run_id = response.data.workflow_runs[0].id;
+										await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{workflow_id}/logs', {
+											owner: 'virtual-labs',
+											repo: repos,
+											workflow_id: run_id,
+										}).then(async (response) => {
+											const pattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z/g;
+											const build_content = await extractFileFromZip(response.data, "build") as string;
+											const formattedContent = build_content.replace(/\n/g, "<br>").replace(pattern, "").replace('[36;1m', '<span style="color: blue; font-weight: bold;">').replace('[32m', '<span style="color: green;">').replace('[31m', '<span style="color: red;">').replace('[0m', '</span>');
+											const panel = vscode.window.createWebviewPanel(
+												'virtualLabs',
+												'Build Results',
+												vscode.ViewColumn.One,
+												{
+													enableScripts: true
+												}
+												);
+												panel.webview.html = getBuildLog(formattedContent);
+												context.globalState.update('prevbuild', formattedContent);
+												if(formattedContent.includes("create mode")){
+													vscode.window.showInformationMessage('build completed successfully');
+													vscode.env.openExternal(vscode.Uri.parse(`https://virtual-labs.github.io/${repos}`));
+												}
+												else{
+													vscode.window.showErrorMessage('build failed');
+													vscode.window.showErrorMessage('Please check the logs for more details');
+												}
+											}).catch(error => {
+												vscode.window.showErrorMessage('build failed: ', error.message);
+											});
 										clearInterval(running_status);
 									}
 									else if (runstatus === 'Failed') {
@@ -647,6 +802,8 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 									vscode.window.showErrorMessage('build failed due to invalid repository. It is wrongly configured');
 									clearInterval(running_status);
 								}
+							}).catch(error => {
+								vscode.window.showErrorMessage('build failed: ', error.message);
 							});
 						} else {
 							vscode.window.showErrorMessage("No workspace folder found.");
@@ -672,9 +829,14 @@ vscode.commands.registerCommand('extension.MergeAndExec', async (context: vscode
 		else if (response.status === 404) {
 			vscode.window.showErrorMessage('Merge failed due to invalid repository. It is wrongly configured');
 		}
-		else {
-			vscode.window.showErrorMessage('Merge failed');
+		else if(!response.status){
+			vscode.window.showErrorMessage('Merge failed as there is no change in the repository');
 		}
+		else {
+			vscode.window.showErrorMessage('Merge failed with code', response.status);
+		}
+	}).catch(error => {
+		vscode.window.showErrorMessage('Merge failed due to', error);
 	});
 });
 
@@ -697,6 +859,10 @@ vscode.commands.registerCommand('extension.submitForReview', async (context: vsc
 					const description = message.description;
 					const workspaceFolders = vscode.workspace.workspaceFolders;
 					pat = context.globalState.get('accesstoken') as string;
+					if(pat === undefined){
+						vscode.window.showErrorMessage("Please initialize the experiment first");
+						return;
+					}
 					if (!workspaceFolders) {
 						vscode.window.showErrorMessage("No repository selected");
 						return;
@@ -728,7 +894,7 @@ vscode.commands.registerCommand('extension.submitForReview', async (context: vsc
 							vscode.window.showErrorMessage('Pull request failed due to invalid repository.');
 						}
 						else {
-							vscode.window.showErrorMessage("Failed to raise Pull request");
+							vscode.window.showErrorMessage("Failed to raise Pull request with code", response.status);
 						}
 					}).catch(error => {
 						vscode.window.showErrorMessage('Sending pull request failed: ' + error.message);
@@ -744,10 +910,46 @@ vscode.commands.registerCommand('extension.submitForReview', async (context: vsc
 
 // Register command for help
 vscode.commands.registerCommand('extension.help', async (extensionUri: vscode.Uri) => {
-	const path = vscode.Uri.joinPath(extensionUri, 'README.md');
+	const path = vscode.Uri.joinPath(extensionUri, 'USER_README.md');
 	vscode.commands.executeCommand('markdown.showPreview', path);
 });
 
+
+// Register command for previous logs of Lint
+vscode.commands.registerCommand('extension.prevLint', async (context: vscode.ExtensionContext) => {
+	const formattedContent = context.globalState.get('prevlint') as string;
+	if (formattedContent === undefined) {
+		vscode.window.showErrorMessage('No previous lint logs found');
+		return;
+	}
+	const panel = vscode.window.createWebviewPanel(
+		'virtualLabs',
+		'Validation Results',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true
+		}
+	);
+	panel.webview.html = getLintResult(formattedContent);
+});
+
+// Register command for previous logs of Build
+vscode.commands.registerCommand('extension.prevBuild', async (context: vscode.ExtensionContext) => {
+	const formattedContent = context.globalState.get('prevbuild') as string;
+	if (formattedContent === undefined) {
+		vscode.window.showErrorMessage('No previous build logs found');
+		return;
+	}
+	const panel = vscode.window.createWebviewPanel(
+		'virtualLabs',
+		'Build Logs',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true
+		}
+	);
+	panel.webview.html = getBuildLog(formattedContent);
+});
 
 // main code that starts everything else
 function activate(context: vscode.ExtensionContext) {
@@ -780,6 +982,12 @@ function activate(context: vscode.ExtensionContext) {
 							break;
 						case 'command6': // Help
 							vscode.commands.executeCommand('extension.help', extensionUri);
+							break;
+						case 'command7': // Previous Lint Logs
+							vscode.commands.executeCommand('extension.prevLint', context);
+							break;
+						case 'command8': // Previous Build Logs
+							vscode.commands.executeCommand('extension.prevBuild', context);
 							break;
 						default:
 							break;
