@@ -19,9 +19,5 @@ jobs:
         run: |
           echo 'Linting code...'
           npm i @virtual-labs/buildexp@latest
-          npx @virtual-labs/buildexp validate > lint.txt
-          git add lint.txt
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git commit -m "Add new file with lint output"
-          git push origin dev
+          npx @virtual-labs/buildexp validate
+	        echo 'Linting Completed..'
