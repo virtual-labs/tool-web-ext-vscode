@@ -17,10 +17,10 @@ To make use of the extension, the following is required:
 2. Click on the extension icon in the left panel
 
 3. You will see the following list of options. 
-    - [Initialize Experiment](#option-1-initialise-experiment)
+    - [Initialize Experiment](#option-1-initialize-experiment)
     - [Save progress](#option-2-save-progress)
     - [Validate](#option-3-validate)
-    - [View Current Experiment](#option-4-view-experiment)
+    - [View Current Experiment](#option-4-view-current-experiment)
     - [Submit for Review](#option-5--submit-for-review)
     - [Help](#option-6---help)
     - [Show Previous Validation Logs](#show-previous-validation-logs)
@@ -69,7 +69,7 @@ By clicking on this you will be prompted to enter:
 
 Clicking on Submit will open that experiment on the dev branch. Do not atttempt to change this.
 
-This step ususually requires a [login via pop-up](#incase-of-popup).
+This step usually requires a [login via pop-up](#incase-of-popup).
 
 For more details, view the [Login section](#log-in)
 
