@@ -128,6 +128,13 @@ This option allows you to view the logs of the previous validation process. If t
 ### Show Previous Build Logs
 This option allows you to view the logs of the previous build process. If there were errors or warnings during that session they will be displayed here.
 
+## Troubleshooting
+
+To ensure proper functionality of the web extension, verify that the following files are present in the .github/workflows folder of your repository:
+[File name 1]
+[File name 2]
+If these files are missing, add them to the .github/workflows folder. These workflow files are crucial for the extension to operate as intended.
+
 ## Developer Support
 If you face any difficulty in using this extension or find any bug then you can perform the following steps
 1. Take a screenshot of the bug you encountered or the problem you got.
