@@ -1,0 +1,120 @@
+{
+  "name": "VirtualLabs",
+  "displayName": "VirtualLabs",
+  "description": "A web extension for Virtual Labs Experiment Authoring. Beta version.",
+  "author": {
+    "name": "Virtual-Labs"
+  },
+  "version": "0.0.10",
+  "engines": {
+    "vscode": "^1.86.0"
+  },
+  "publisher": "Virtual-Labs",
+  "repository": "https://github.com/virtual-labs/tool-web-ext-vscode/",
+  "categories": [
+    "Other"
+  ],
+  "browser": "./dist/web/extension.js",
+  "icon": "images/logo.png",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vlabs-experiment-generator",
+          "title": "Experiment",
+          "icon": "images/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "vlabs-experiment-generator": [
+        {
+          "type": "webview",
+          "id": "vlabs.experimentView",
+          "name": "Authoring Environment"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "VirtualLabs.initializeExperiment",
+        "title": "Clone an experiment"
+      },
+      {
+        "command": "VirtualLabs.saveExperiment",
+        "title": "Save experiment progress"
+      },
+      {
+        "command": "VirtualLabs.validate",
+        "title": "Lints the code"
+      },
+      {
+        "command": "VirtualLabs.saveExperiment",
+        "title": "Save experiment progress"
+      },
+      {
+        "command": "VirtualLabs.MergeAndExec",
+        "title": "Merge and Execute"
+      },
+      {
+        "command": "VirtualLabs.submitForReview",
+        "title": "Send pull request"
+      },
+      {
+        "command": "VirtualLabs.help",
+        "title": "Help page"
+      }
+    ],
+    "extends": [
+      "eslint:recommended"
+    ],
+    "env": {
+      "browser": true,
+      "es2021": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    }
+  },
+  "scripts": {
+    "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
+    "pretest": "npm run compile-web",
+    "dev": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ",
+    "generate-certificate": "mkdir -p $HOME/certs && cd $HOME/certs && mkcert -install && mkcert localhost",
+    "dev-in-vscode-web": "npx serve --cors -l 5000 --ssl-cert $HOME/certs/localhost.pem --ssl-key $HOME/certs/localhost-key.pem",
+    "vscode:prepublish": "npm run package-web",
+    "compile-web": "webpack",
+    "watch-web": "webpack --watch",
+    "package-web": "webpack --mode production --devtool hidden-source-map",
+    "lint": "eslint src --ext ts",
+    "package-it": "vsce package --baseImagesUrl https://github.com/virtual-labs/tool-web-ext-vscode/raw/dev",
+    "publish-it": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/assert": "^1.5.10",
+    "@types/mocha": "^10.0.6",
+    "@types/vscode": "^1.86.0",
+    "@types/webpack-env": "^1.18.4",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "@vscode/test-web": "^0.0.51",
+    "@vscode/vsce": "^2.25.0",
+    "assert": "^2.1.0",
+    "eslint": "^8.57.0",
+    "mocha": "^10.3.0",
+    "process": "^0.11.10",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@virtual-labs/buildexp": "^1.0.5",
+    "jszip": "^3.10.1",
+    "octokit": "^3.2.0"
+  },
+  "extensionDependencies": [
+    "ms-vscode.remote-repositories"
+  ]
+}

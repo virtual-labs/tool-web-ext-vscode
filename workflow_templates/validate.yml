@@ -1,0 +1,23 @@
+name: Validate
+
+on:
+    workflow_dispatch:
+
+permissions: write-all
+
+jobs:
+  lint:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Running Lint Command
+        run: |
+          echo 'Linting code...'
+          npm i @virtual-labs/buildexp@latest
+          npx @virtual-labs/buildexp validate
+          echo 'Linting Completed..'
