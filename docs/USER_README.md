@@ -131,8 +131,8 @@ This option allows you to view the logs of the previous build process. If there 
 ## Troubleshooting
 
 To ensure proper functionality of the web extension, verify that the following files are present in the .github/workflows folder of your repository:
-[File name 1]
-[File name 2]
+- [[Validate Workflow]](https://github.com/virtual-labs/ph3-exp-template/blob/main/.github/workflows/validate.yml)
+- [[View Experiment Workflow]](https://github.com/virtual-labs/ph3-exp-template/blob/main/.github/workflows/view_exp.yml)
 If these files are missing, add them to the .github/workflows folder. These workflow files are crucial for the extension to operate as intended.
 
 ## Developer Support
