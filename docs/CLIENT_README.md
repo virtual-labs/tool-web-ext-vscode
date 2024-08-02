@@ -12,10 +12,10 @@ The Extension that is presently deployed and setup was based on some assumptions
 
 ### Requirements while Experiments Setup (Not extension)
 
-The Extension assumes that the two files given in [Workflow_templates](../workflow_templates/) are placed in .github/workflows folder in main branch of the experiment along with the initial files.    
+The Extension assumes that the two files given in [Workflow_templates](../workflow_templates/) are placed in .github/workflows folder in main branch of the experiment along with the initial files.   If your experiment does not have these workflow, please copy the files and place them in .github/workflows folder of expetimnet repository. 
 The two files are:
-1. [validate.yml](../workflow_templates/validate.yml)
-2. [deployment-script.yml](../workflow_templates/deployment-script.yml)
+1. [validate.yml]([../workflow_templates/validate.yml](https://github.com/virtual-labs/ph3-exp-template/blob/main/.github/workflows/validate.yml))
+2. [view_exp.yml]([../workflow_templates/deployment-script.yml](https://github.com/virtual-labs/ph3-exp-template/blob/main/.github/workflows/view_exp.yml))
 
 ### Conditions while Migrating
 
