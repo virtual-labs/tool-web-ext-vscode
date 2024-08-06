@@ -110,7 +110,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@virtual-labs/buildexp": "^1.0.5",
+    "@virtual-labs/buildexp": "^2.0.0",
     "jszip": "^3.10.1",
     "octokit": "^3.2.0"
   },
